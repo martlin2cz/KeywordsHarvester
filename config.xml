@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Keywords Harvester 1.5 configuration file</comment>
+<entry key="Harvester.ToPicworkflowQueueSize">50</entry>
+<entry key="GUI.FormUpdateInterval">2000</entry>
+<entry key="WaitStep">100</entry>
+<entry key="Export.ExportFile">output.xlsx</entry>
+<entry key="Subkeyword.WaitBetweenServices">1000</entry>
+<entry key="Harvester.QueuesDumpFile">dump.bin</entry>
+<entry key="Export.BatchSize">50</entry>
+<entry key="Picworkflow.BatchSize">50</entry>
+<entry key="Shuterstock.ClientSecret">1aac92eb001e1cb2aec0f6739a9ecabe16e35d05</entry>
+<entry key="Picworkflow.QueryTimeout">10000</entry>
+<entry key="Picworkflow.FailedWait">600000</entry>
+<entry key="Shuterstock.ClientId">60e093aa3cc83d1143c6</entry>
+<entry key="Harvester.ToExportQueueSize">50</entry>
+<entry key="Subkeyword.WaitBetweenQueries">60000</entry>
+<entry key="Subkeywording.SamplesCount">1</entry>
+<entry key="GUI.MemoryCleanInterval">60000</entry>
+<entry key="Picworkflow.FailedFile">picworkflow-failed.csv</entry>
+<entry key="Picworkflow.WaitBetweenQueries">60000</entry>
+<entry key="Export.WaitBetweenQueries">10000</entry>
+</properties>
