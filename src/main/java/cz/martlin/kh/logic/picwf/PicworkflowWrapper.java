@@ -17,7 +17,6 @@ import cz.martlin.kh.logic.utils.DDPMsgListener;
 public class PicworkflowWrapper {
 
 	private final Config config;
-	private final UnpicworkflowableExporter unpicwfEx;
 	private DDPClientExtension client;
 
 	public static final String NAME = "Picworkflow";
@@ -27,7 +26,7 @@ public class PicworkflowWrapper {
 	public PicworkflowWrapper(Config config) {
 		super();
 		this.config = config;
-		this.unpicwfEx = new UnpicworkflowableExporter(config);
+
 	}
 
 	public DDPClientExtension getClient() {
@@ -36,10 +35,6 @@ public class PicworkflowWrapper {
 
 	public Config getConfig() {
 		return config;
-	}
-	
-	public UnpicworkflowableExporter getUnpicwfExporter() {
-		return unpicwfEx;
 	}
 
 	/**
@@ -60,9 +55,6 @@ public class PicworkflowWrapper {
 				throw new NetworkException(NAME
 						+ " connecting to web service seems to failed");
 			}
-
-			unpicwfEx.initialize();
-
 		} catch (Exception e) {
 			if (client != null) {
 				try {
@@ -87,7 +79,6 @@ public class PicworkflowWrapper {
 
 		try {
 			client.disconnect();
-			unpicwfEx.finish();
 		} catch (Exception e) {
 			throw new NetworkException(NAME
 					+ " querry: Some error during finishing", e);

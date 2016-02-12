@@ -1,4 +1,4 @@
-package cz.martlin.kh.logic.harvest;
+package cz.martlin.kh.logic.harvest2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,24 +19,28 @@ import org.slf4j.LoggerFactory;
 import cz.martlin.kh.logic.Config;
 
 /**
- * Implements dumping harvester data (HarvestProcessData) into file and loading
- * back.
+ * Similarly to HarvestDataDumperInporter, implements importing, dumping and
+ * loading of {@link TreeHarvestProcessData} instances.
  * 
  * @author martin
  * 
  */
-@Deprecated
-public class HarvestDataDumperInporter {
-
+public class TreeHarvestDataDumperInporter {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private final Config config;
 
-	public HarvestDataDumperInporter(Config config) {
+	public TreeHarvestDataDumperInporter(Config config) {
 		this.config = config;
 	}
 
-	public boolean save(HarvestProcessData data) {
+	/**
+	 * Saves given data into file {@link Config#getQueuesDumpFile()}.
+	 * 
+	 * @param data
+	 * @return true if success.
+	 */
+	public boolean save(TreeHarvestProcessData data) {
 		try {
 			File file = config.getQueuesDumpFile();
 			writeToBIN(file, data);
@@ -49,39 +53,66 @@ public class HarvestDataDumperInporter {
 		}
 	}
 
-	private void writeToBIN(File file, HarvestProcessData data)
+	/**
+	 * Saves data into file.
+	 * 
+	 * @param file
+	 * @param data
+	 * @throws IOException
+	 */
+	private void writeToBIN(File file, TreeHarvestProcessData data)
 			throws IOException {
 
-		FileOutputStream fos = new FileOutputStream(file);
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		try {
+			fos = new FileOutputStream(file);
+			oos = new ObjectOutputStream(fos);
 
-		oos.writeObject(data);
-
-		IOUtils.closeQuietly(oos);
-		IOUtils.closeQuietly(fos);
+			oos.writeObject(data);
+		} catch (Exception e) {
+			throw new IOException("Cannot write harvest data object", e);
+		} finally {
+			IOUtils.closeQuietly(oos);
+			IOUtils.closeQuietly(fos);
+		}
 	}
 
-	public HarvestProcessData load() {
+	/**
+	 * Loads data from {@link Config#getQueuesDumpFile()} file.
+	 * 
+	 * @return data or null if fails.
+	 */
+	public TreeHarvestProcessData load() {
 		File file = config.getQueuesDumpFile();
 		try {
-			HarvestProcessData data = loadFromBIN(file);
+			TreeHarvestProcessData data = loadFromBIN(file);
 
 			log.info("Harvest data successfully loaded from file {}", file);
 			return data;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error("Error during loading harvest data from file", e);
 			return null;
 		}
 	}
 
-	private HarvestProcessData loadFromBIN(File file) throws IOException {
-
-		FileInputStream fis = new FileInputStream(file);
-		ObjectInputStream ois = new ObjectInputStream(fis);
+	/**
+	 * Loads data from file.
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	private TreeHarvestProcessData loadFromBIN(File file) throws IOException {
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
 
 		try {
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+
 			Object object = ois.readObject();
-			HarvestProcessData data = (HarvestProcessData) object;
+			TreeHarvestProcessData data = (TreeHarvestProcessData) object;
 
 			return data;
 		} catch (Exception e) {
@@ -93,8 +124,16 @@ public class HarvestDataDumperInporter {
 
 	}
 
+	/**
+	 * Imports into data from given file using given keywords separator regex.
+	 * 
+	 * @param file
+	 * @param separator
+	 * @param data
+	 * @return true if success
+	 */
 	public boolean importFromTextFile(File file, String separator,
-			HarvestProcessData data) {
+			TreeHarvestProcessData data) {
 		Reader reader = null;
 		try {
 			reader = new FileReader(file);

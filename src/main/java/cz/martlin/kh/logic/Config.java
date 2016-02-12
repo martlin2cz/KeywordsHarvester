@@ -1,6 +1,7 @@
 package cz.martlin.kh.logic;
 
 import java.io.File;
+import java.io.Serializable;
 
 import cz.martlin.kh.logic.utils.ConfigStorerLoader;
 
@@ -10,7 +11,8 @@ import cz.martlin.kh.logic.utils.ConfigStorerLoader;
  * @author martin
  * 
  */
-public class Config {
+public class Config implements Serializable {
+	private static final long serialVersionUID = -6585645414753714922L;
 
 	/**
 	 * Time step in miliseconds which is used in waiting.
@@ -63,7 +65,7 @@ public class Config {
 	/**
 	 * (Minimal) time (in miliseconds) to wait between subkeywording queries.
 	 */
-	private int waitBtwSubkeywordingQrs = 60 * 1000;
+	private int waitBtwSubkeywordingQrs = 1 * 1000;
 	/**
 	 * (Minimal) time (in miliseconds) to wait between picworkflow queries.
 	 */
@@ -76,6 +78,7 @@ public class Config {
 	// /////////////////////////////////////////////////////////////////////////
 	/**
 	 * Count of keywords to Picworkflow query before is query executed.
+	 * TODO rename to pfBatchSize
 	 */
 	private int hwToPicworkflowQueueSize = 50;
 	/**
@@ -113,6 +116,10 @@ public class Config {
 	 * @deprecated
 	 */
 	private long memoryCleanInterval = 60 * 1000;
+
+	
+	//TODO serializace ... a vůbec - všechno
+	private int hwMinProcessBatchSize = 50;
 
 	// /////////////////////////////////////////////////////////////////////////
 
@@ -272,6 +279,10 @@ public class Config {
 		this.memoryCleanInterval = memoryCleanInterval;
 	}
 
+	public int getHWMinProcessBatchSize() {
+		return hwMinProcessBatchSize;
+	}
+	
 	/**
 	 * Tries to load configuration from file. If succeeds, returns it. If not,
 	 * returns default instance.
@@ -399,5 +410,7 @@ public class Config {
 				+ ", formUpdateInterval=" + formUpdateInterval
 				+ ", memoryCleanInterval=" + memoryCleanInterval + "]";
 	}
+
+	
 
 }

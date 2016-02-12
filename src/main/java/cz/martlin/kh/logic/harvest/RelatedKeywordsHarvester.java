@@ -13,6 +13,7 @@ import cz.martlin.kh.logic.exception.NetworkException;
 import cz.martlin.kh.logic.export.AbstractExporter;
 import cz.martlin.kh.logic.export.AppendExporter;
 import cz.martlin.kh.logic.export.RewriteExporter;
+import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -26,9 +27,13 @@ import cz.martlin.kh.logic.utils.Interruptable;
  * prepared to run theese methods in separate threads. (they communicate via
  * HarvestProcessData instance) and can be interrupted ({@link #interrupt()}).
  * 
+ * @deprecated Too complicated && seems buggy while used as
+ *             {@link ParalellHarvester}. Use {@link TreeRelKeywsHarvest}.
+ * @see TreeRelKeywsHarvest
  * @author martin
  * 
  */
+@Deprecated
 public class RelatedKeywordsHarvester implements Interruptable {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -278,8 +283,8 @@ public class RelatedKeywordsHarvester implements Interruptable {
 			log.warn("Picflowork of {} failed, will try later.", keywords);
 		}
 
-		Set<Keyword> done = query.getDone();
-		Set<String> notdone = query.getNotDone();
+		Set<Keyword> done = null;//XXX query.getDone();
+		Set<String> notdone = null; //XXX query.getNotDone();
 
 		if (done != null && notdone != null) {
 			data.picworkflowed(keywords, done);
@@ -370,13 +375,10 @@ public class RelatedKeywordsHarvester implements Interruptable {
 
 	}
 
-	private void waitOrBeInterrupted(long wait) throws InterruptedException {
-		long waited = 0;
-		long step = config.getWaitStep();
-
-		while (waited < step && !interrupted) {
-			Thread.sleep(step);
-			waited += step;
+	private void waitOrBeInterrupted(long wait) {
+		try {
+			Thread.sleep(wait);
+		} catch (InterruptedException eIgnore) {
 		}
 	}
 }

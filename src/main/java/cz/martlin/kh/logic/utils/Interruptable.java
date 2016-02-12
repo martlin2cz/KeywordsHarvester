@@ -8,7 +8,7 @@ package cz.martlin.kh.logic.utils;
  */
 public interface Interruptable {
 	/**
-	 * Marks this service as interrupted and it shoud stop its work as soon as
+	 * Marks this service as interrupted and it should stop its work as soon as
 	 * possible.
 	 */
 	public void interrupt();

@@ -9,6 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.martlin.kh.logic.picwf.PicwfQueryResult;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 
@@ -44,10 +45,10 @@ public class PicworkflowStabilityTester {
 			for (int i = 0; i < queries; i++) {
 				Set<String> keywords = createTestingsKeywords(size);
 				PicworkflowQuery q = pw.createQuerry(keywords);
-				q.runQuery();
+				PicwfQueryResult r = q.runQuery();
 
 				log.info("Test {} (OneC) {}/{}: Done={}, Not done={}", id, i,
-						queries, q.getDone().size(), q.getNotDone().size());
+						queries, r.getDone().size(), r.getNotdone().size());
 
 				if (wait > 0) {
 					Thread.sleep(wait);
@@ -81,11 +82,11 @@ public class PicworkflowStabilityTester {
 
 				Set<String> keywords = createTestingsKeywords(size);
 				PicworkflowQuery q = pw.createQuerry(keywords);
-				q.runQuery();
+				PicwfQueryResult r = q.runQuery();
 				pw.reconnect();
 
 				log.info("Test {} (Rcnt) {}/{}: Done={}, Not done={}", id, i,
-						queries, q.getDone().size(), q.getNotDone().size());
+						queries, r.getDone().size(), r.getNotdone().size());
 
 				if (wait > 0) {
 					Thread.sleep(wait);
@@ -116,10 +117,10 @@ public class PicworkflowStabilityTester {
 
 				Set<String> keywords = createTestingsKeywords(size);
 				PicworkflowQuery q = pw.createQuerry(keywords);
-				q.runQuery();
+				PicwfQueryResult r = q.runQuery();
 
 				log.info("Test {} (Each) {}/{}: Done={}, Not done={}", id, i,
-						queries, q.getDone().size(), q.getNotDone().size());
+						queries, r.getDone().size(), r.getNotdone().size());
 
 				if (wait > 0) {
 					Thread.sleep(wait);
@@ -133,7 +134,7 @@ public class PicworkflowStabilityTester {
 	}
 
 	private Set<String> createTestingsKeywords(int size) {
-		List<String> universe = new ArrayList<>(Testing.testKeywords1());
+		List<String> universe = new ArrayList<>(TestingKeywords.testKeywords1());
 		Set<String> result = new LinkedHashSet<>();
 		Random rand = new Random();
 

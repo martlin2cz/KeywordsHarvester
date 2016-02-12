@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.exception.NetworkException;
 import cz.martlin.kh.logic.export.AbstractExporter;
+import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
 
 /**
@@ -16,9 +17,12 @@ import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
  * stared by method {@link #startNew(Set)} and aborted by method {@link #stop()}
  * .
  * 
+ * @deprecated too heavy, use simplier {@link TreeRelKeywsHarvest} instead
+ * @see TreeRelKeywsHarvest
  * @author martin
  * 
  */
+@Deprecated
 public class ParalellHarvester {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -39,7 +43,7 @@ public class ParalellHarvester {
 	public ParalellHarvester(Config config,
 			Set<AbstractServiceWrapper> services,
 			Set<AbstractExporter> exporters) {
-		
+
 		harvester = new RelatedKeywordsHarvester(config, services, exporters);
 
 		subkeyworder = new SubkeywordThread(harvester);
@@ -86,14 +90,17 @@ public class ParalellHarvester {
 		harvester.interrupt();
 
 		try {
+			subkeyworder.interrupt();
 			subkeyworder.join();
 		} catch (Exception e) {
 		}
 		try {
+			picworkflower.interrupt();
 			picworkflower.join();
 		} catch (Exception e) {
 		}
 		try {
+			exprorter.interrupt();
 			exprorter.join();
 		} catch (Exception e) {
 		}

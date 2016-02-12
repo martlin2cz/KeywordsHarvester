@@ -73,10 +73,6 @@ public class PicworkflowQuery implements Interruptable {
 		log.debug("Query interrupted, awaiting timeout step");
 	}
 
-	public Set<Keyword> getDone() {
-		return done;
-	}
-
 	/**
 	 * Runs querying. Sends data to server and awaits until all responses
 	 * returns back. If no in specified (by Config) timeout, skips.
@@ -84,7 +80,7 @@ public class PicworkflowQuery implements Interruptable {
 	 * @return
 	 * @throws NetworkException
 	 */
-	public Set<Keyword> runQuery() throws NetworkException {
+	public PicwfQueryResult runQuery() throws NetworkException {
 		wrapper.checkIsConnected();
 
 		try {
@@ -94,12 +90,11 @@ public class PicworkflowQuery implements Interruptable {
 			sendSubscribeAndUnsubscribe();
 			awaitAddedReponses();
 
+			PicwfQueryResult result = new PicwfQueryResult(required, done);
 			log.info("Querying to get metadata finised, {} of {} successful",
-					done.size(), required.size());
+					result.getDoneCount(), result.getRequestedCount());
 
-			tryToWaitOnFailed(done);
-
-			return done;
+			return result;
 		} catch (Exception e) {
 			throw new NetworkException(NAME
 					+ " query: Some error during querring", e);
@@ -107,43 +102,11 @@ public class PicworkflowQuery implements Interruptable {
 	}
 
 	/**
-	 * If no keyword is successfully done, waits time given by config (config#getPwFailedWait).
-	 * 
-	 * @param done
-	 * @throws NetworkException
-	 *             when wait fails
-	 */
-	private void tryToWaitOnFailed(Set<Keyword> done) throws NetworkException {
-		if (done.isEmpty()) {
-
-			int wait = wrapper.getConfig().getPwFailedWait();
-			log.warn(
-					"No successful keywords done, waiting {} ms and hoping it will help",
-					wait);
-
-			long step = wrapper.getConfig().getWaitStep();
-
-			try {
-				int waited = 0;
-				while (waited < wait && !interrupted) {
-					Thread.sleep(step);
-					waited += step;
-				}
-			} catch (InterruptedException e) {
-				throw new NetworkException(NAME + " query: Error during wait",
-						e);
-			}
-		}
-
-	}
-
-	/**
 	 * For each required keyword sends request querry and tries to await
 	 * response.
 	 * 
-	 * @throws InterruptedException
 	 */
-	private void sendRemoteQuery() throws InterruptedException {
+	private void sendRemoteQuery() {
 		ResultMessageListener resultList = new ResultMessageListener(this);
 		wrapper.getClient().addMessageListener(DDPClient.DdpMessageType.RESULT,
 				resultList);
@@ -156,6 +119,10 @@ public class PicworkflowQuery implements Interruptable {
 			wrapper.getClient().call(SUBMIT_METHOD_NAME, params);
 
 			awaitResponseAndLog(keyword);
+
+			if (interrupted) {
+				break;
+			}
 		}
 
 		wrapper.getClient().removeMessageListener(resultList);
@@ -167,28 +134,34 @@ public class PicworkflowQuery implements Interruptable {
 	 * 
 	 * @param keyword
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean awaitResponseAndLog(String keyword)
-			throws InterruptedException {
+	private boolean awaitResponseAndLog(String keyword) {
+
 		long waited = 0;
 		long waitStep = wrapper.getConfig().getWaitStep();
 		long waitMax = wrapper.getConfig().getPWQueryTimeout();
 
 		while (querying.contains(keyword) && !interrupted && (waited < waitMax)) {
-			Thread.sleep(waitStep);
+			try {
+				Thread.sleep(waitStep);
+			} catch (InterruptedException eIgnore) {
+				break;
+			}
 			waited += waitStep;
 		}
 
 		boolean stilOnServer = querying.contains(keyword);
 		if (stilOnServer) {
 			log.warn(
-					"Keyword {} submit did not get response in given time {} ms ({}/{} done)",
-					keyword, waitMax, querying.size(), required.size());
+					"Keyword {} submit did not get response in given time about {} ms ({}/{} done)",
+					keyword, wrapper.getConfig().getPWQueryTimeout(),
+					querying.size(), required.size());
 			return false;
 		} else {
-			log.debug("Keyword {} submit got response in {} ms ({}/{} done)",
-					keyword, waited, querying.size(), required.size());
+			log.debug(
+					"Keyword {} submit got response in about {} ms ({}/{} done)",
+					keyword, wrapper.getConfig().getPWQueryTimeout(),
+					querying.size(), required.size());
 			return true;
 		}
 	}
@@ -214,10 +187,9 @@ public class PicworkflowQuery implements Interruptable {
 	 * {@link #keywordProcesseded(HashMap)}.
 	 * 
 	 * @param querying
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	private void awaitAddedReponses() throws InterruptedException, IOException {
+	private void awaitAddedReponses() throws IOException {
 		AddedMessageListener addedList = new AddedMessageListener(this);
 
 		log.debug(
@@ -227,25 +199,22 @@ public class PicworkflowQuery implements Interruptable {
 		wrapper.getClient().addMessageListener(DDPClient.DdpMessageType.ADDED,
 				addedList);
 
-		long waited = 0;
-		long waitStep = wrapper.getConfig().getWaitStep();
-		long waitMax = wrapper.getConfig().getPWQueryTimeout();
-
-		while ((done.size() < required.size()) && !interrupted
-				&& (waited < waitMax)) {
-			Thread.sleep(waitStep);
-			waited += waitStep;
+		long wait = wrapper.getConfig().getPWQueryTimeout();
+		try {
+			Thread.sleep(wait);
+		} catch (InterruptedException eIgnore) {
 		}
 
-		if ((done.size() >= required.size())) { // rather >= you know ...
-			log.debug("Got all {} metadata responses in {} ms", done.size(),
-					waited);
+		if (done.size() >= required.size()) { // rather >= you know ...
+			log.debug("Got all {} metadata responses in about {} ms",
+					done.size(), wait);
 		} else {
-			Set<String> notDone = getNotDone();
+			Set<String> notDone = PicwfQueryResult.calculateNotdoneKeyws(
+					required, done);
 			log.warn(
 					"Got only {} of {} metadata responses in (given time) {} ms (not done: {})",
-					done.size(), required.size(), waited, notDone);
-			wrapper.getUnpicwfExporter().save(notDone);
+					done.size(), required.size(), wait, notDone);
+
 		}
 
 		wrapper.getClient().removeMessageListener(addedList);
@@ -302,25 +271,6 @@ public class PicworkflowQuery implements Interruptable {
 				keyword, done.size(), required.size());
 	}
 
-	/**
-	 * Returns set of keywords which aren't or have not been successfully
-	 * procceded (yet).
-	 * 
-	 * @return
-	 */
-	public Set<String> getNotDone() {
-		Set<String> notDone = new HashSet<>(required);
-
-		for (Keyword keyword : done) {
-			boolean removed = notDone.remove(keyword.getKeyword());
-			if (!removed) {
-				log.trace(
-						"In done keywords occured keyword {} which have not been required to process.",
-						keyword.getKeyword());
-			}
-		}
-
-		return notDone;
-	}
+	
 
 }

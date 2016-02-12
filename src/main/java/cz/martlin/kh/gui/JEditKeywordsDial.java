@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.harvest.HarvestProcessData;
+import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
 
 /**
  * Frame for seeing, removing and adding keywords.
@@ -33,7 +33,7 @@ public class JEditKeywordsDial extends JDialog {
 	public static final Dimension BUTT_PREF_SIZE = new Dimension(100, 20);
 
 	private final DefaultListModel<String> model = new DefaultListModel<>();
-	private HarvestProcessData data;
+	private TreeHarvestProcessData data;
 
 	private JList<String> keywordsLst;
 	private JTextField addTextBox;
@@ -46,7 +46,7 @@ public class JEditKeywordsDial extends JDialog {
 		Dimension size = new Dimension(250, 400);
 		setPreferredSize(size);
 		setMinimumSize(size);
-		
+
 		pack();
 	}
 
@@ -96,33 +96,16 @@ public class JEditKeywordsDial extends JDialog {
 		return pane;
 	}
 
-	// private JPanel createSidePane() {
-	// JPanel pane = new JPanel();
-	// pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
-	//
-	// JButton submitButt = new JButton("Submit");
-	// submitButt.setPreferredSize(BUTT_PREF_SIZE);
-	// submitButt.addActionListener(new SubmitButtActionListener());
-	// pane.add(submitButt);
-	//
-	// JButton cancelButt = new JButton("Discard");
-	// cancelButt.setPreferredSize(BUTT_PREF_SIZE);
-	// cancelButt.addActionListener(new CancelButtActionListener());
-	// pane.add(cancelButt);
-	//
-	// return pane;
-	// }
-
 	/**
 	 * Sets data to this frame. Data must not be null!
 	 * 
 	 * @param data
 	 */
-	public void setToData(HarvestProcessData data) {
+	public void setToData(TreeHarvestProcessData data) {
 		this.data = data;
 
 		model.clear();
-		for (String keyword : data.getToSubkeywording()) {
+		for (String keyword : data.getWaitingProcess()) {
 			model.addElement(keyword);
 		}
 	}
@@ -132,7 +115,7 @@ public class JEditKeywordsDial extends JDialog {
 	 * 
 	 * @return
 	 */
-	public HarvestProcessData getData() {
+	public TreeHarvestProcessData getData() {
 		return data;
 	}
 

@@ -17,6 +17,7 @@ import cz.martlin.kh.logic.utils.Interruptable;
 import cz.martlin.kh.logic.utils.NetworkRequest;
 
 public abstract class AbstractServiceWrapper implements Interruptable {
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private final Config config;

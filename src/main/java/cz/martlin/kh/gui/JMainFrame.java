@@ -20,10 +20,12 @@ import javax.swing.filechooser.FileFilter;
 
 import layout.SpringUtilities;
 import cz.martlin.kh.KHMain;
+import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.export.AbstractExporter;
-import cz.martlin.kh.logic.harvest.HarvestProcessData;
-import cz.martlin.kh.logic.harvest.ParalellHarvester;
+import cz.martlin.kh.logic.harvest2.TreeHarvestThread;
+import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
+import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
 
 /**
  * Main frame of application.
@@ -40,9 +42,8 @@ public class JMainFrame extends JFrame {
 
 	private final Config config;
 
-	private FormDataUpdateThread updateThread;
-	private ParalellHarvester harvester;
-	private HarvestProcessData data;
+	private TreeHarvestThread harvThread;
+	private TreeHarvestProcessData data;
 
 	private final JEditKeywordsDial editDial;
 
@@ -56,6 +57,7 @@ public class JMainFrame extends JFrame {
 	private JButton editQueueButt;
 	private JLabel doneLbl;
 	private JButton viewDoneButt;
+	private JLabel statusLbl;
 
 	public JMainFrame(Config config) {
 		super(TITLE);
@@ -134,12 +136,16 @@ public class JMainFrame extends JFrame {
 		changeFileButt.addActionListener(new ChangeFileButtActionListner());
 		pane.add(changeFileButt);
 
-		SpringUtilities.makeCompactGrid(pane, 5, 2, 10, 10, 10, 15);
+		statusLbl = new JLabel("");
+		pane.add(statusLbl);
+		pane.add(new JLabel());
+
+		SpringUtilities.makeCompactGrid(pane, 6, 2, 10, 10, 10, 15);
 
 	}
 
 	private boolean isRunning() {
-		return harvester != null;
+		return harvThread != null;
 	}
 
 	/**
@@ -151,11 +157,18 @@ public class JMainFrame extends JFrame {
 		String path = config.getExportFile().getPath();
 		outputFileLbl.setText("Output file: " + path);
 
-		int waiting = (data == null) ? 0 : data.getTosubkeywordCount();
-		waitingLbl.setText("Waiting to be processed: " + waiting);
+		if (data == null) {
+			waitingLbl.setText("Waiting to be processed" + "Nothing");
+			doneLbl.setText("Done: " + "Nothing");
+		} else {
+			int waiting = data.getTreeRootsCount();
+			int level = data.getTreeLevel();
+			waitingLbl.setText("Waiting to be processed: " + waiting
+					+ " on level " + level);
 
-		int done = (data == null) ? 0 : data.getExportedCount();
-		doneLbl.setText("Done: " + done);
+			int done = data.getDoneCount();
+			doneLbl.setText("Done: " + done);
+		}
 
 		setEnabledButts();
 	}
@@ -171,6 +184,17 @@ public class JMainFrame extends JFrame {
 		changeFileButt.setEnabled(!isRunning);
 		editQueueButt.setEnabled(!isRunning);
 		viewDoneButt.setEnabled(!isRunning);
+	}
+
+	/**
+	 * Sets status of status field
+	 * 
+	 * @param status
+	 */
+	public void setStatus(String status) {
+		updateDataInFrame();
+		this.statusLbl.setText(status);
+
 	}
 
 	/**
@@ -194,7 +218,7 @@ public class JMainFrame extends JFrame {
 	 */
 	public void editKeywords() {
 		if (data == null) {
-			data = HarvestProcessData.createNew(config,
+			data = TreeHarvestProcessData.createNew(config,
 					Collections.<String> emptySet());
 		}
 
@@ -207,7 +231,7 @@ public class JMainFrame extends JFrame {
 	 * {@link Config#getQueuesDumpFile()}).
 	 */
 	public void loadPreviousHarvest() {
-		HarvestProcessData newData = HarvestProcessData
+		TreeHarvestProcessData newData = TreeHarvestProcessData
 				.loadFromDumpFile(config);
 		if (newData == null) {
 			error("Could not load previous harvest. Check file "
@@ -231,8 +255,8 @@ public class JMainFrame extends JFrame {
 			File file = chooser.getSelectedFile();
 			TxtWithSeparatorFileFilter filter = (TxtWithSeparatorFileFilter) chooser
 					.getFileFilter();
-			HarvestProcessData newData = HarvestProcessData.importThem(config,
-					file, filter.getSeparator());
+			TreeHarvestProcessData newData = TreeHarvestProcessData.importThem(
+					config, file, filter.getSeparator());
 			if (newData != null) {
 				data = newData;
 			} else {
@@ -302,7 +326,7 @@ public class JMainFrame extends JFrame {
 	 * @return
 	 */
 	private JExportFileChooser createExportFileChooser(File selectedFile) {
-		Set<AbstractExporter> exporters = KHMain.getExporters(config);
+		Set<AbstractExporter> exporters = StuffProvider.getExporters(config);
 
 		JExportFileChooser chooser = new JExportFileChooser(exporters,
 				selectedFile);
@@ -335,12 +359,8 @@ public class JMainFrame extends JFrame {
 
 					@Override
 					public void run() {
-						harvester.stop();
-						harvester = null;
-
-						updateThread.interrupt();
-						updateThread = null;
-
+						harvThread.interrupt();
+						harvThread = null;
 					}
 				});
 			} catch (Exception e) {
@@ -371,17 +391,10 @@ public class JMainFrame extends JFrame {
 
 			editDial.setVisible(false);
 
-			harvester = new ParalellHarvester(config,
-					KHMain.getServices(config), KHMain.getExporters(config));
-			boolean succ = harvester.start(data);
-			if (!succ) {
-				error("Some error occured during harvesting start.");
-				harvester = null;
-				return;
-			}
-
-			updateThread = new FormDataUpdateThread(frame, config);
-			updateThread.start();
+			TreeRelKeywsHarvest harvester = StuffProvider.createHarvester(
+					config, frame);
+			harvThread = new TreeHarvestThread(harvester, data);
+			harvThread.run();
 
 			updateDataInFrame();
 			setEnabledButts();
@@ -450,4 +463,5 @@ public class JMainFrame extends JFrame {
 		}
 
 	}
+
 }

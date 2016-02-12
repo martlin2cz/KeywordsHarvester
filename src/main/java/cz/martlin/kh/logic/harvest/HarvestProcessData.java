@@ -20,6 +20,7 @@ import cz.martlin.kh.logic.Keyword;
  * @author martin
  * 
  */
+@Deprecated
 public class HarvestProcessData implements Serializable {
 
 	private static final long serialVersionUID = -2624293193757930412L;
@@ -32,7 +33,15 @@ public class HarvestProcessData implements Serializable {
 
 	private final Map<String, Keyword> metadatas;
 
-	private HarvestProcessData(Config config, Set<String> initialKeywords) {
+	/**
+	 * Use rather factory methods {@link #createNew(Config, Set)},
+	 * {@link #loadFromDumpFile(Config)},
+	 * {@link #importThem(Config, File, String)}.
+	 * 
+	 * @param config
+	 * @param initialKeywords
+	 */
+	public HarvestProcessData(Config config, Set<String> initialKeywords) {
 		// this.config = config;
 
 		this.toSubkeyword = new LinkedList<>(initialKeywords);

@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import cz.martlin.kh.logic.exception.NetworkException;
+import cz.martlin.kh.logic.picwf.PicwfQueryResult;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 
@@ -31,8 +32,8 @@ public class PlaingWithRatingCalc {
 		keywords.add("Diving Into Water"); // 1.364
 		// keywords.add(""); //
 
-		keywords.addAll(Testing.testKeywords1());
-		keywords.addAll(Testing.testKeywords2());
+		keywords.addAll(TestingKeywords.testKeywords1());
+		keywords.addAll(TestingKeywords.testKeywords2());
 		// keywords.addAll(Testing.testKeywords3());
 
 		queryAndTabelize(keywords);
@@ -43,7 +44,7 @@ public class PlaingWithRatingCalc {
 		try {
 			picw.initialize();
 			PicworkflowQuery query = picw.createQuerry(keywords);
-			Set<Keyword> result = query.runQuery();
+			PicwfQueryResult result = query.runQuery();
 			picw.finish();
 
 			double max = tableCompletelly(result, 0.05);	//TODO tady si vybrat vhodnou delta
@@ -55,11 +56,11 @@ public class PlaingWithRatingCalc {
 
 	}
 
-	private static double tableCompletelly(Set<Keyword> keywords,
+	private static double tableCompletelly(PicwfQueryResult result,
 			double maxRelEpsilon) {
 
 		double maxRelFound = 0.0;
-		for (Keyword keyword : keywords) {
+		for (Keyword keyword : result.getMetadatas()) {
 			Map<String, Double> fields = keywordToFields(keyword);
 
 			System.out.printf("%30s | %8.2f | ", //
@@ -147,7 +148,7 @@ public class PlaingWithRatingCalc {
 		return result;
 	}
 
-	private static void tableIt(Set<Keyword> keywords) {
+	public static void tableIt(Set<Keyword> keywords) {
 		for (Keyword keyword : keywords) {
 			System.out
 					.printf("%30s | %12.2f | %12.2f | \n", //

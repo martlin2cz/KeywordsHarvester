@@ -26,8 +26,9 @@ public class UnpicworkflowableExporter {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private static final CSVFormat FORMAT = CSVFormat.DEFAULT;
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+			"EEE, d MMM yyyy HH:mm:ss");
+
 	private final Config config;
 
 	private CSVPrinter printer;
@@ -43,10 +44,46 @@ public class UnpicworkflowableExporter {
 	 * @throws IOException
 	 */
 	public void initialize() throws IOException {
-		writer = new FileWriter(config.getPwFailedFile(), true);
-		printer = new CSVPrinter(writer, FORMAT);
-		
-		log.info("Unpicworkflowable keywords exporter ready to export to file {}", config.getPwFailedFile());
+		try {
+			writer = new FileWriter(config.getPwFailedFile(), true);
+			printer = new CSVPrinter(writer, FORMAT);
+
+			log.info(
+					"Unpicworkflowable keywords exporter ready to export to file {}",
+					config.getPwFailedFile());
+		} catch (IOException e) {
+			log.error(
+					"Could not initialize unpicworkfloable keywords exporter",
+					e);
+			throw e;
+		}
+	}
+
+	/**
+	 * Initializes, saves, closes. Returns true if succeeds.
+	 * 
+	 * @param keywords
+	 * @return
+	 */
+	public boolean simplySave(Set<String> keywords) {
+		boolean success;
+		try {
+			initialize();
+		} catch (IOException e) {
+			success = false;
+			return success;
+		}
+
+		try {
+			save(keywords);
+			success = true;
+		} catch (IOException e) {
+			success = false;
+		}
+
+		finish();
+
+		return success;
 	}
 
 	/**
@@ -57,12 +94,16 @@ public class UnpicworkflowableExporter {
 	 */
 	public void save(Set<String> keywords) throws IOException {
 		Date now = new Date();
-		for (String keyword : keywords) {
-			printKeyword(now, keyword);
+		try {
+			for (String keyword : keywords) {
+				printKeyword(now, keyword);
+			}
+		} catch (IOException e) {
+			log.error("Cannot save keywords " + keywords, e);
+			throw e;
 		}
 
 		printer.flush();
-		
 		log.info("Exported unpicworkflowable keywords {}", keywords);
 	}
 
@@ -87,7 +128,7 @@ public class UnpicworkflowableExporter {
 
 		writer = null;
 		printer = null;
-		
+
 		log.info("Unpicworkflowable keywords exporter finished its work.");
 
 	}
