@@ -151,6 +151,10 @@ public class PicwfQueryResult {
 	private static Set<String> calculateNotdone(Set<String> requested,
 			Set<String> done) {
 
+		if (requested.contains(null)) {
+			System.err.println("REquest contains null: " + requested);
+		}
+
 		Set<String> result = new LinkedHashSet<>(requested);
 		result.removeAll(done);
 		return result;

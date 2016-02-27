@@ -16,7 +16,6 @@ import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
 import cz.martlin.kh.logic.subkeyw.IStockphotoWrapper;
 import cz.martlin.kh.logic.subkeyw.ShutterstockWrapper;
 import cz.martlin.kh.logic.subkeyw.Subkeyworder;
-import cz.martlin.kh.logic.utils.ConfigStorerLoader;
 
 /**
  * Implements simplified access to various class's instances ( {@link Config},
@@ -41,28 +40,15 @@ public class StuffProvider {
 	 */
 	public static Config getConfig() {
 		if (config == null) {
-			config = loadOrDefaultConfig();
+			config = Config.loadOrDefault();
 		}
 
 		return config;
 	}
 
 	/**
-	 * Tries to load cofig. If load fails, returns default.
-	 * 
-	 * @return
-	 */
-	private static Config loadOrDefaultConfig() {
-		ConfigStorerLoader csl = new ConfigStorerLoader();
-
-		Config config = new Config();
-		csl.load(config);
-
-		return config;
-	}
-
-	/**
 	 * Creates keywords harvester with frame listener.
+	 * 
 	 * @param config
 	 * @param frame
 	 * @return
@@ -75,15 +61,17 @@ public class StuffProvider {
 
 	/**
 	 * Creates subkeyworder.
+	 * 
 	 * @param config
 	 * @return
 	 */
 	public static Subkeyworder getSubkeyworder(Config config) {
 		return new Subkeyworder(config, getServices(config));
 	}
-	
+
 	/**
 	 * Creates picworkflower.
+	 * 
 	 * @param config
 	 * @return
 	 */
@@ -93,6 +81,7 @@ public class StuffProvider {
 
 	/**
 	 * Creates exporter.
+	 * 
 	 * @param config
 	 * @return
 	 */
@@ -102,6 +91,7 @@ public class StuffProvider {
 
 	/**
 	 * Creates and returns list of subkeywording services.
+	 * 
 	 * @return
 	 */
 	public static Set<AbstractServiceWrapper> getServices(Config config) {
@@ -114,6 +104,7 @@ public class StuffProvider {
 
 	/**
 	 * Creates and returns list of exporters.
+	 * 
 	 * @return
 	 */
 	public static Set<AbstractExporter> getExporters(Config config) {
@@ -126,6 +117,7 @@ public class StuffProvider {
 
 	/**
 	 * Initializes subkeywording services into given set.
+	 * 
 	 * @param config
 	 * @param services
 	 */
@@ -135,10 +127,10 @@ public class StuffProvider {
 		services.add(new IStockphotoWrapper(config));
 		services.add(new ShutterstockWrapper(config));
 	}
-	
 
 	/**
 	 * Initializes exporters into given set.
+	 * 
 	 * @param config
 	 * @param exporters
 	 */

@@ -139,7 +139,7 @@ public class PicworkflowQuery implements Interruptable {
 
 		long waited = 0;
 		long waitStep = wrapper.getConfig().getWaitStep();
-		long waitMax = wrapper.getConfig().getPWQueryTimeout();
+		long waitMax = wrapper.getConfig().getPwQueryTimeout();
 
 		while (querying.contains(keyword) && !interrupted && (waited < waitMax)) {
 			try {
@@ -154,13 +154,13 @@ public class PicworkflowQuery implements Interruptable {
 		if (stilOnServer) {
 			log.warn(
 					"Keyword {} submit did not get response in given time about {} ms ({}/{} done)",
-					keyword, wrapper.getConfig().getPWQueryTimeout(),
+					keyword, wrapper.getConfig().getPwQueryTimeout(),
 					querying.size(), required.size());
 			return false;
 		} else {
 			log.debug(
 					"Keyword {} submit got response in about {} ms ({}/{} done)",
-					keyword, wrapper.getConfig().getPWQueryTimeout(),
+					keyword, wrapper.getConfig().getPwQueryTimeout(),
 					querying.size(), required.size());
 			return true;
 		}
@@ -199,7 +199,7 @@ public class PicworkflowQuery implements Interruptable {
 		wrapper.getClient().addMessageListener(DDPClient.DdpMessageType.ADDED,
 				addedList);
 
-		long wait = wrapper.getConfig().getPWQueryTimeout();
+		long wait = wrapper.getConfig().getPwQueryTimeout();
 		try {
 			Thread.sleep(wait);
 		} catch (InterruptedException eIgnore) {

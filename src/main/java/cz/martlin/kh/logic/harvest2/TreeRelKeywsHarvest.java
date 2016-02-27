@@ -1,7 +1,6 @@
 package cz.martlin.kh.logic.harvest2;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -120,10 +119,8 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			return false;
 		}
 
-		log.info(
-				"Harvesting started, now done {} keywords and {} is waiting on level {}.",
-				data.getDoneCount(), data.getTreeRootsCount(),
-				data.getTreeLevel());
+		log.info("Harvesting started, now done {} keywords and {} is waiting.",
+				data.getDoneCount(), data.getWaitingsCount());
 		tryToLog("Ready");
 
 		return true;
@@ -131,36 +128,27 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	}
 
 /**
-	 * Creates next set of keywords to process. This is set to data by {@link TreeHarvestProcessData#setToProcess(Set)).
+	 * Creates next set of keywords to process. This is set 
+	 * to data by {@link TreeHarvestProcessData#setToProcess(Set)).
 	 * @param data
 	 */
 	private void createNextToProcess(TreeHarvestProcessData data) {
-		int minSize = config.getHWMinProcessBatchSize();
-		log.info("Preparing next set to process with minimal size {}", minSize);
-		tryToLog("Loading at least ", minSize, " related keywords...");
+		try {
+			int count = config.getHwProcessIterationSize();
+			log.info("Preparing next set to process with size {}", count);
+			tryToLog("Loading ", count, " related keywords...");
 
-		Set<String> keywords = new LinkedHashSet<>(minSize);
+			Set<String> keywords = data.getNextToProcess(count);
+			data.setToProcess(keywords);
 
-		while (!interrupted && keywords.size() < minSize
-				&& data.isHasSomeToProcess()) {
+			log.info("Prepared next set to process with size {}",
+					keywords.size());
+			tryToLog("Related keywords ready to process");
+		} catch (Exception e) {
+			log.error("Creating next keywords to process failed unexpectedly",
+					e);
 
-			String keyword = data.getNextToProcess();
-
-			if (keyword == null) {
-				continue;
-			}
-
-			Set<String> subkws = data.getSubkeywordsOf(keyword);
-			Set<String> filtered = data.filterDone(subkws);
-			keywords.addAll(filtered);
-			tryToLog("Loading related keywords... now loaded ", keywords.size());
 		}
-
-		data.setToProcess(keywords);
-
-		log.info("Prepared next set to process with size {}", keywords.size());
-		tryToLog("Related keywords ready to process");
-
 	}
 
 	/**
@@ -170,24 +158,28 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	 * @param data
 	 */
 	private void process(TreeHarvestProcessData data) {
-		Set<String> keywords = data.getToProcess();
+		try {
+			Set<String> keywords = data.getToProcess();
 
-		data.setToPicworkflow(keywords);
+			data.setToPicworkflow(keywords);
 
-		if (data.isSomeToPicworkflow() && !interrupted) {
-			picworkflow(data);
-		}
+			if (data.isSomeToPicworkflow() && !interrupted) {
+				picworkflow(data);
+			}
 
-		if (data.isSomeToExport() && !interrupted) {
-			export(data);
-		}
+			if (data.isSomeToExport() && !interrupted) {
+				export(data);
+			}
 
-		if (data.isSomeToDone() && !interrupted) {
-			done(data);
-		}
+			if (data.isSomeToDone() && !interrupted) {
+				done(data);
+			}
 
-		if (data.isSomeToProcess() && !interrupted) {
-			data.unsetToProcess();
+			if (data.isSomeToProcess() && !interrupted) {
+				data.unsetToProcess();
+			}
+		} catch (Exception e) {
+			log.error("Processing keywords failed unexpectedly", e);
 		}
 	}
 
@@ -202,7 +194,8 @@ public class TreeRelKeywsHarvest implements Interruptable {
 
 		log.info("Picworkflowing of {} keywords", keywords.size());
 		tryToLog("Invoking picworkflow with ", keywords.size() + " keywords...");
-
+		
+		
 		PicwfQueryResult result = picworkflow.run(keywords);
 		if (interrupted) {
 			return;
@@ -216,7 +209,8 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			log.info(
 					"Picworkflowing of {} keywords done with {} success ({} successful, {} failed, {} really)",
 					result.getRequestedCount(), result.getSuccessRatio(),
-					result.getDoneCount(), result.getNotdoneCount());
+					result.getDoneCount(), result.getNotdoneCount(), result
+							.getReallyNotdone().size());
 			tryToLog("Picworkflow completed with ", result.getDoneCount()
 					+ " keywords");
 		} else {
@@ -277,6 +271,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 
 	/**
 	 * Finishes process.
+	 * 
 	 * @param data
 	 */
 	private void finish(TreeHarvestProcessData data) {
@@ -287,7 +282,9 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	}
 
 	/**
-	 * If {@link #listener} is not null, from given args creates message and sends to listener.
+	 * If {@link #listener} is not null, from given args creates message and
+	 * sends to listener.
+	 * 
 	 * @param args
 	 */
 	protected void tryToLog(Object... args) {
@@ -297,7 +294,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			for (Object arg : args) {
 				msg.append(arg);
 			}
-			
+
 			listener.occured(msg.toString());
 		}
 	}

@@ -1,7 +1,6 @@
 package cz.martlin.kh.logic;
 
 import java.io.File;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -9,9 +8,6 @@ import cz.martlin.kh.logic.exception.NetworkException;
 import cz.martlin.kh.logic.export.AbstractExporter;
 import cz.martlin.kh.logic.export.CSVExporter;
 import cz.martlin.kh.logic.export.XLSXExporter;
-import cz.martlin.kh.logic.harvest.HarvestProcessData;
-import cz.martlin.kh.logic.harvest.ParalellHarvester;
-import cz.martlin.kh.logic.harvest.RelatedKeywordsHarvester;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -39,9 +35,9 @@ public class Testing {
 	public static void main(String[] args) {
 		System.out.println("Uncomment something to run test:");
 
-		// config.setExportFile(new File("test.csv"));
+		 //config.setExportFile(new File("test.csv"));
 		new ConfigStorerLoader().save(config);
-		System.out.println("Config saved.");
+//		System.out.println("Config saved.");
 
 		// testExporter(config, csv);
 
@@ -66,7 +62,7 @@ public class Testing {
 	protected static void testExporter(Config config, AbstractExporter export) {
 		try {
 			System.out.println("init:" + export + ", into: "
-					+ config.getExportFile().getPath());
+					+ config.getExExportFile().getPath());
 			export.initializeExporter();
 
 			Set<Keyword> keywords1 = TestingKeywords.createTestingKeywordsA();
@@ -136,86 +132,6 @@ public class Testing {
 			System.out.println(kws1);
 			// System.out.println(kws2);
 		} catch (NetworkException | InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Deprecated
-	public static void testHarvester(Config config, IStockphotoWrapper isw,
-			ShutterstockWrapper ssw) {
-
-		Set<String> initialKeywords = new LinkedHashSet<>();
-		initialKeywords.add("blue");
-		initialKeywords.add("Brno");
-
-		HarvestProcessData data = HarvestProcessData.createNew(config,
-				initialKeywords);
-
-		final RelatedKeywordsHarvester harv = //
-		new RelatedKeywordsHarvester(config, null, null);// XXX nulls
-
-		try {
-			harv.initialize(data);
-
-			harv.doSubkeywording();
-			harv.doPicworkflowing();
-			harv.doExporting();
-
-			// HarvestProcessData data;
-			// data = harv.initialize(initialKeywords);
-			// harv.harvest(data);
-			// harv.finish();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Deprecated
-	public static void testParallelHarvester(Config config,
-			IStockphotoWrapper isw, ShutterstockWrapper ssw) {
-		try {
-			// wrappers~services
-
-			// initials keywords
-			Set<String> initialKeywords = new LinkedHashSet<>();
-			initialKeywords.add("cocoa");
-
-			// harvester
-			HarvestProcessData data = HarvestProcessData.createNew(config,
-					initialKeywords);
-			ParalellHarvester harvester;
-
-			// run firstly
-			// harvester = new ParalellHarvester(config, wrappers);
-			// harvester.start(data);
-			//
-			// Thread.sleep(1 * 60 * 1000);
-			// harvester.stop();
-
-			// run secondly
-			harvester = new ParalellHarvester(config, null, null); // XXX ->
-																	// nulls
-			harvester.start(data);
-
-			Thread.sleep(1 * 30 * 60 * 1000);
-			harvester.stop();
-
-			// save and load
-			System.out.println("Before Save: " + data);
-			data.saveToDumpFile(config);
-			data = HarvestProcessData.loadFromDumpFile(config);
-			System.out.println("After Save:  " + data);
-
-			// run thirdly
-			harvester = new ParalellHarvester(config, null, null); // XXX ->
-																	// nulls
-			harvester.start(data);
-
-			Thread.sleep(1 * 30 * 60 * 1000);
-			harvester.stop();
-
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

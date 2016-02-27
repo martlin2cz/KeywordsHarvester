@@ -2,6 +2,7 @@ package cz.martlin.kh.logic;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,10 +21,10 @@ public class TestingV2 {
 	public static void main(String[] args) {
 		System.out.println("Uncomment something to run test:");
 
-		// testRelatedKeywordsTree();
+		 testRelatedKeywordsTree();
 		// FIXME testTreeHarvester();
 		// testTreeHarvesterWithInterrupts();
-		testPicworkflower();
+		//testPicworkflower();
 
 		System.out.println("Done.");
 	}
@@ -70,6 +71,14 @@ public class TestingV2 {
 		runTreeHarvester(count, interruptAfter, set);
 	}
 
+	/**
+	 * 
+	 * @param count
+	 * @param interruptAfter
+	 *            probably does not work properly
+	 * @param keywords
+	 * @throws InterruptedException
+	 */
 	private static void runTreeHarvester(Integer count, Integer interruptAfter,
 			final Set<String> keywords) throws InterruptedException {
 		final TreeRelKeywsHarvest harvest = new TreeRelKeywsHarvest(config);
@@ -148,18 +157,20 @@ public class TestingV2 {
 	// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public static void testRelatedKeywordsTree() {
-		final int count = 100;
+		final int count = 1000;
 		final List<String> initials = Arrays.asList(new String[] {//
 				"No People at Moon", });
 
-		RelatedKeywordsTree tree = new RelatedKeywordsTree(config, initials);
+		TreeHarvestProcessData data = TreeHarvestProcessData.createNew(config,
+				new HashSet<String>());
+		RelatedKeywordsTree tree = new RelatedKeywordsTree(config, initials,
+				data);
 		int i = 0;
 		for (String keyword : tree) {
 			System.err.flush();
 
 			System.out.println(i + ": \t " + keyword + " \t at " + new Date()
-					+ " on tree with " + tree.getRoots().size()
-					+ " nodes on level " + tree.getLevel());
+					+ " on tree with " + tree.getItemsCount() + " items");
 
 			System.out.flush();
 

@@ -1,6 +1,5 @@
 package cz.martlin.kh.logic;
 
-import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -165,27 +164,27 @@ public class TestingKeywords {
 	public static Config createTestingConfig() {
 		Config c = new Config();
 
-		c.setWaitStep(-111);
-		c.setSamplesCount(-256);
-
-		c.setSsClientid("HAHAHEHE");
-		c.setSsClientSecret("You Shall not Pass!!");
-
-		c.setPwQueryTimeout(-999);
-		c.setPwBatchSize(-89);
-		c.setPwFailedFile(new File("C:\ba-dum-tss.html"));
-
-		c.setWaitBtwSubkeywordingQrs(-77);
-		c.setWaitBtwPicflowQrs(-1024);
-		c.setWaitBtwExports(-603);
-
-		c.setHwToPicworkflowQueueSize(-604);
-		c.setExportQueueSize(-446);
-
-		c.setExportBatchSize(-1091);
-		c.setExportFile(new File("/home/r/simpson.csv"));
-		c.setQueuesDumpFile(new File("Dumb_as_dump.txt"));
-
+//		c.setWaitStep(-111);
+//		c.setSamplesCount(-256);
+//
+//		c.setSsClientID("HAHAHEHE");
+//		c.setSsClientSecret("You Shall not Pass!!");
+//
+//		c.setPwQueryTimeout(-999);
+//		c.setPwBatchSize(-89);
+//		c.setPwFailedFile(new File("C:\ba-dum-tss.html"));
+//
+//		c.setWaitBtwSubkeywordingQrs(-77);
+//		c.setWaitBtwPicflowQrs(-1024);
+//		c.setWaitBtwExports(-603);
+//
+//		c.setHwToPicworkflowQueueSize(-604);
+//		c.setExportQueueSize(-446);
+//
+//		c.setExportBatchSize(-1091);
+//		c.setExportFile(new File("/home/r/simpson.csv"));
+//		c.setQueuesDumpFile(new File("Dumb_as_dump.txt"));
+//TODO FIXME 
 		return c;
 	}
 

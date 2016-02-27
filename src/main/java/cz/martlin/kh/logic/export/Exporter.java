@@ -40,14 +40,14 @@ public class Exporter {
 			Set<AbstractExporter> exporters) {
 
 		AbstractExporter export = AbstractExporter.getBySuffix(exporters,
-				config.getExportFile());
+				config.getExExportFile());
 
 		if (export == null) {
 			log.error("Unkown exporter for exporter file {}",
-					config.getExportFile());
+					config.getExExportFile());
 		} else {
 			log.info("Exporter {} ready to exporter into file {}", export,
-					config.getExportFile());
+					config.getExExportFile());
 		}
 
 		return export;

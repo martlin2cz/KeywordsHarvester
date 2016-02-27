@@ -46,7 +46,7 @@ public class Subkeyworder {
 		log.info("Subkeywording keyword {} with services {}", keyword, services);
 
 		LinkedHashSet<String> result = new LinkedHashSet<>();
-		int count = config.getSamplesCount();
+		int count = config.getSkSamplesCount();
 
 		for (AbstractServiceWrapper service : services) {
 			Set<String> subkeyws = service.getRelatedKeywords(keyword, count);
@@ -72,7 +72,7 @@ public class Subkeyworder {
 	 */
 	private void waitUntilNextService() {
 
-		long wait = config.getSKWaitBetweenServices();
+		long wait = config.getSkWaitBetweenServices();
 
 		try {
 			Thread.sleep(wait);

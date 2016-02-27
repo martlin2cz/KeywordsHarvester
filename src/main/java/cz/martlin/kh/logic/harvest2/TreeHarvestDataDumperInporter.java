@@ -42,7 +42,7 @@ public class TreeHarvestDataDumperInporter {
 	 */
 	public boolean save(TreeHarvestProcessData data) {
 		try {
-			File file = config.getQueuesDumpFile();
+			File file = config.getHwDataDumpFile();
 			writeToBIN(file, data);
 
 			log.info("Harvest data saved into file {}", file);
@@ -84,7 +84,7 @@ public class TreeHarvestDataDumperInporter {
 	 * @return data or null if fails.
 	 */
 	public TreeHarvestProcessData load() {
-		File file = config.getQueuesDumpFile();
+		File file = config.getHwDataDumpFile();
 		try {
 			TreeHarvestProcessData data = loadFromBIN(file);
 

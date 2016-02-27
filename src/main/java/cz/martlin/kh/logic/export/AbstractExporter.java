@@ -127,7 +127,7 @@ public abstract class AbstractExporter {
 	 * @return
 	 */
 	public Boolean tryBackupFile() {
-		File file = config.getExportFile();
+		File file = config.getExExportFile();
 
 		if (!file.exists()) {
 			return null;
@@ -159,7 +159,7 @@ public abstract class AbstractExporter {
 	 * @throws IOException
 	 */
 	public boolean tryToWriteHeader() throws IOException {
-		File file = config.getExportFile();
+		File file = config.getExExportFile();
 		boolean exists = file.exists();
 
 		if (!exists) {

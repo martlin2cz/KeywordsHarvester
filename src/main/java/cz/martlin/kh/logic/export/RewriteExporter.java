@@ -25,7 +25,7 @@ public abstract class RewriteExporter extends AbstractExporter {
 		tryBackupFile();
 
 		log.info("Will rewritelly export {} to {}.", getSuffix(), config
-				.getExportFile().getAbsoluteFile());
+				.getExExportFile().getAbsoluteFile());
 	}
 
 	@Override

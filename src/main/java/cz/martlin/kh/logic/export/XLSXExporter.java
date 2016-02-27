@@ -66,8 +66,8 @@ public class XLSXExporter extends RewriteExporter {
 
 	@Override
 	public void openFile() throws IOException {
-		ous = new FileOutputStream(config.getExportFile());
-		workbook = new SXSSFWorkbook(config.getExExportBatchSize());
+		ous = new FileOutputStream(config.getExExportFile());
+		workbook = new SXSSFWorkbook(config.getHwProcessIterationSize());
 		sheet = workbook.createSheet("Keywords");
 
 		nextRowIndex = 0;
@@ -109,7 +109,7 @@ public class XLSXExporter extends RewriteExporter {
 		appendCell(4, row, keyword.getViews());
 		appendCell(5, row, keyword.getViewsPerFile());
 		appendCell(6, row, keyword.getLang());
-		appendCell(7, row, keyword.getRating());	//FIXME formátovat na český formát
+		appendCell(7, row, keyword.getRating());
 
 		nextRowIndex++;
 
@@ -117,7 +117,8 @@ public class XLSXExporter extends RewriteExporter {
 
 	/**
 	 * Just method which creates cell on given cellIndex in given row with
-	 * given, please not-null, value.
+	 * given, please not-null, value. On float or double value saves with czech
+	 * "," instead of english "."
 	 * 
 	 * @param cellIndex
 	 * @param row
@@ -125,7 +126,15 @@ public class XLSXExporter extends RewriteExporter {
 	 */
 	private void appendCell(int cellIndex, Row row, Object value) {
 		Cell cell = row.createCell(cellIndex);
-		cell.setCellValue(value.toString());
+
+		String str;
+		if (value instanceof Float || value instanceof Double) {
+			str = value.toString().replace('.', ',');
+		} else {
+			str = value.toString();
+		}
+
+		cell.setCellValue(str);
 	}
 
 }

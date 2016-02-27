@@ -127,9 +127,10 @@ public class JMainFrame extends JFrame {
 
 		// output
 		outputFileLbl = new JLabel("Output file: --"
-				+ config.getExportFile().getPath());
+				+ config.getExExportFile().getPath());
 		outputFileLbl.setPreferredSize(LEFT_LABEL_PREF_SIZE);
-		outputFileLbl.setToolTipText(config.getExportFile().getPath());
+		outputFileLbl
+				.setToolTipText(config.getExExportFile().getAbsolutePath());
 		pane.add(outputFileLbl);
 
 		changeFileButt = new JButton("Change file");
@@ -154,17 +155,15 @@ public class JMainFrame extends JFrame {
 	public void updateDataInFrame() {
 		stopButt.setText("Stop");
 
-		String path = config.getExportFile().getPath();
+		String path = config.getExExportFile().getPath();
 		outputFileLbl.setText("Output file: " + path);
 
 		if (data == null) {
-			waitingLbl.setText("Waiting to be processed" + "Nothing");
+			waitingLbl.setText("Waiting to be processed: " + "Nothing");
 			doneLbl.setText("Done: " + "Nothing");
 		} else {
-			int waiting = data.getTreeRootsCount();
-			int level = data.getTreeLevel();
-			waitingLbl.setText("Waiting to be processed: " + waiting
-					+ " on level " + level);
+			int waiting = data.getWaitingsCount();
+			waitingLbl.setText("Waiting to be processed: " + waiting);
 
 			int done = data.getDoneCount();
 			doneLbl.setText("Done: " + done);
@@ -235,7 +234,7 @@ public class JMainFrame extends JFrame {
 				.loadFromDumpFile(config);
 		if (newData == null) {
 			error("Could not load previous harvest. Check file "
-					+ config.getQueuesDumpFile().getPath());
+					+ config.getHwDataDumpFile().getPath());
 			return;
 		}
 
@@ -271,7 +270,7 @@ public class JMainFrame extends JFrame {
 	 * Opens file chooser to change export ({@link Config#getExportFile()}).
 	 */
 	public void chooseExportFile() {
-		File file = config.getExportFile();
+		File file = config.getExExportFile();
 
 		JExportFileChooser chooser = createExportFileChooser(file);
 		int result = chooser.showSaveDialog(this);
@@ -279,7 +278,7 @@ public class JMainFrame extends JFrame {
 		if (result == JFileChooser.APPROVE_OPTION) {
 			file = chooser.getSelectedFileOrError();
 			if (file != null) {
-				config.setExportFile(file);
+				config.setExExportFile(file);
 			}
 		}
 
@@ -290,7 +289,7 @@ public class JMainFrame extends JFrame {
 	 * Informs user how to see done keywords.
 	 */
 	public void viewDone() {
-		info("To see result open file " + config.getExportFile().getPath()
+		info("To see result open file " + config.getExExportFile().getPath()
 				+ " (in excel?).");
 	}
 

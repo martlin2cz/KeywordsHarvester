@@ -9,10 +9,13 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
-import cz.martlin.kh.logic.harvest2.tree.LazyTree;
-import cz.martlin.kh.logic.harvest2.tree.LazyTreeIterator;
+import cz.martlin.kh.logic.harvest2.tree.BFSLazyTree;
+import cz.martlin.kh.logic.harvest2.tree.BFSLazyTreeIterator;
 
 /**
  * Data object representing harvesting process.
@@ -23,8 +26,10 @@ import cz.martlin.kh.logic.harvest2.tree.LazyTreeIterator;
 public class TreeHarvestProcessData implements Serializable {
 	private static final long serialVersionUID = 1793788020744701466L;
 
-	private final LazyTree tree;
-	private LazyTreeIterator treeIterator;
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	private final BFSLazyTree tree;
+	private BFSLazyTreeIterator treeIterator;
 
 	private Set<String> toProcess;
 	private Set<String> toPicworkflow;
@@ -47,8 +52,8 @@ public class TreeHarvestProcessData implements Serializable {
 	 */
 	private TreeHarvestProcessData(Config config, Set<String> initialKeywords) {
 
-		this.tree = new RelatedKeywordsTree(config, initialKeywords);
-		this.treeIterator = (LazyTreeIterator) tree.iterator();
+		this.tree = new RelatedKeywordsTree(config, initialKeywords, this);
+		this.treeIterator = (BFSLazyTreeIterator) tree.iterator();
 
 		this.metadatas = new HashMap<>(initialKeywords.size());
 		this.done = new LinkedHashSet<>();
@@ -76,40 +81,21 @@ public class TreeHarvestProcessData implements Serializable {
 	}
 
 	/**
-	 * Gets and returns next keyword waiting to be processed.
+	 * Gets and returns next count keywords to process.
 	 * 
 	 * @return
 	 */
-	public String getNextToProcess() {
-		return treeIterator.next();
+	public Set<String> getNextToProcess(int count) {
+		return treeIterator.next(count);
 	}
 
 	/**
-	 * Gets (loads) related keyword of given keyword.
-	 * 
-	 * @param keyword
-	 * @return
-	 */
-	public Set<String> getSubkeywordsOf(String keyword) {
-		return tree.getChildren(keyword);
-	}
-
-	/**
-	 * Returns count of keywords on tree level.
+	 * Returns count of keywords waiting to process.
 	 * 
 	 * @return
 	 */
-	public int getTreeRootsCount() {
-		return tree.getRootsCount();
-	}
-
-	/**
-	 * Returns level of tree.
-	 * 
-	 * @return
-	 */
-	public int getTreeLevel() {
-		return tree.getLevel();
+	public int getWaitingsCount() {
+		return tree.getItemsCount();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -137,7 +123,8 @@ public class TreeHarvestProcessData implements Serializable {
 	 * @param toProcess
 	 */
 	public void setToProcess(Set<String> toProcess) {
-		this.toProcess = toProcess;
+
+		this.toProcess = filterNulls(toProcess);
 	}
 
 	/**
@@ -173,7 +160,7 @@ public class TreeHarvestProcessData implements Serializable {
 	 * @param toPicworkflow
 	 */
 	public void setToPicworkflow(Set<String> toPicworkflow) {
-		this.toPicworkflow = toPicworkflow;
+		this.toPicworkflow = filterNulls(toPicworkflow);
 	}
 
 	/**
@@ -187,6 +174,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Is some data to, or currently beeing in, export?
+	 * 
 	 * @return
 	 */
 	public boolean isSomeToExport() {
@@ -195,6 +183,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Returns data to, or currently beeing in, export.
+	 * 
 	 * @return
 	 */
 	public Set<Keyword> getToExport() {
@@ -203,6 +192,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Sets data to, or currently beeing in, export.
+	 * 
 	 * @param toExport
 	 */
 	public void setToExport(Set<Keyword> toExport) {
@@ -221,6 +211,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Is some data to, or currently beeing in, complete process?
+	 * 
 	 * @return
 	 */
 	public boolean isSomeToDone() {
@@ -229,6 +220,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Returns data to, or currently beeing in, completing of process.
+	 * 
 	 * @return
 	 */
 	public Set<Keyword> getToDone() {
@@ -237,6 +229,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Sets data to, or currently beeing in, completing of process.
+	 * 
 	 * @param toDone
 	 */
 	public void setToDone(Set<Keyword> toDone) {
@@ -250,10 +243,11 @@ public class TreeHarvestProcessData implements Serializable {
 		this.toDone = null;
 	}
 
-	/////////////////////////////////////
-	
+	// ///////////////////////////////////
+
 	/**
 	 * Adds given keywords into done set.
+	 * 
 	 * @param done
 	 */
 	public void addDone(Set<Keyword> done) {
@@ -263,6 +257,7 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Returns count of completelly done keywords.
+	 * 
 	 * @return
 	 */
 	public int getDoneCount() {
@@ -294,7 +289,6 @@ public class TreeHarvestProcessData implements Serializable {
 	 */
 	public synchronized void removeFromData(String keyword) {
 		tree.remove(keyword);
-		treeIterator.reset();
 	}
 
 	/**
@@ -306,7 +300,6 @@ public class TreeHarvestProcessData implements Serializable {
 		Set<String> set = new HashSet<>();
 		set.add(keyword);
 		tree.add(set);
-		treeIterator.reset();
 	}
 
 	/**
@@ -322,14 +315,16 @@ public class TreeHarvestProcessData implements Serializable {
 
 	/**
 	 * Returns keywords currently waiting (are roots of tree).
+	 * 
 	 * @return
 	 */
-	public synchronized Set<String> getWaitingProcess() {
-		return tree.getRoots();
+	public synchronized Iterable<String> getWaitingProcess() {
+		return tree.getItems();
 	}
 
 	/**
 	 * Returns done keywords.
+	 * 
 	 * @return
 	 */
 	public synchronized Set<Keyword> getDone() {
@@ -337,6 +332,29 @@ public class TreeHarvestProcessData implements Serializable {
 	}
 
 	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Removes null value from given set (if is not null). Logs if so, and
+	 * returns modified set.
+	 * 
+	 * @param set
+	 * @return
+	 */
+	private Set<String> filterNulls(Set<String> set) {
+		try {
+			if (set == null) {
+				return set;
+			}
+
+			boolean rem = set.remove(null);
+
+			if (rem) {
+				log.warn("Removed null valued from set of keywords: " + set);
+			}
+		} catch (NullPointerException e) {
+		}
+		return set;
+	}
 
 	/**
 	 * For given set of keywords returns corresponding set of theirs metadatas.

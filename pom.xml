@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.martlin</groupId>
 	<artifactId>KeywordsHarvester</artifactId>
-	<version>1.5</version>
+	<version>1.7</version>
 	<name>Images' keywords harvester for Pavel D Prichystal</name>
 	<description>Application querries picworkflow.com with user entered keyword and selects reladed keyfords by shutterstock.com and istockphoto.com and recursivelly looks for them. </description>
 
@@ -52,13 +52,28 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.9</version>
 		</dependency>
-		
+
 		<!-- IO UTILS -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
+
+		<!-- junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		
+		<!-- jaxon -->
+		<dependency>
+			<groupId>cz.martlin</groupId>
+			<artifactId>jaxon</artifactId>
+			<version>0.3.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

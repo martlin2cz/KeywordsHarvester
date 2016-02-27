@@ -50,8 +50,8 @@ public class ShutterstockWrapper extends AbstractServiceWrapper {
 	protected void doAuthorisation(NetworkRequest request) {
 		super.doAuthorisation(request);
 
-		String username = getConfig().getSScliendID();
-		String password = getConfig().getSSclientSecret();
+		String username = getConfig().getSsClientID();
+		String password = getConfig().getSsClientSecret();
 
 		request.setBasicAuth(username, password);
 	}

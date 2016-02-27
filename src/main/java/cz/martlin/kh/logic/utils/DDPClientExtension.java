@@ -46,6 +46,15 @@ public class DDPClientExtension extends DDPClient {
 
 		while (this.getState() != CONNSTATE.Connected && !errorOccured) {
 			Thread.sleep(100);
+
+			synchronized (this) {
+				if (this.getState() == CONNSTATE.Closed) {
+					this.connect(); // like that?
+				}
+				if (this.getState() == CONNSTATE.Connected) {
+					return errorOccured;
+				}
+			}
 		}
 
 		return errorOccured;

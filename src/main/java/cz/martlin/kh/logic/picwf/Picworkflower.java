@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.exception.NetworkException;
 import cz.martlin.kh.logic.utils.Interruptable;
 
 /**
@@ -51,7 +50,7 @@ public class Picworkflower implements Interruptable {
 	public PicwfQueryResult run(Set<String> keywords) {
 		try {
 			picworkflow.initialize();
-		} catch (NetworkException e) {
+		} catch (Exception e) {
 			log.error("Could not initialize picworkflower", e);
 			return null;
 		}
@@ -61,17 +60,21 @@ public class Picworkflower implements Interruptable {
 			currentQuery = picworkflow.createQuerry(keywords);
 			result = currentQuery.runQuery();
 			currentQuery = null;
-		} catch (NetworkException e) {
+		} catch (Exception e) {
 			log.error("Picworkflow currentQuery execution failed", e);
 			result = null;
 		}
 
+		try {
 		tryToWaitOnFailed(result);
 		saveNotdones(result);
-
+		} catch (Exception e) {
+			log.error("Picworkflow processing not dones failed", e);
+		}
+		
 		try {
 			picworkflow.finish();
-		} catch (NetworkException e) {
+		} catch (Exception e) {
 			log.warn("Could not finish picworkflower", e);
 		}
 

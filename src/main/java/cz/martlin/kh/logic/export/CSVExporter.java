@@ -42,7 +42,7 @@ public class CSVExporter extends AppendExporter {
 
 	@Override
 	public void openFile() throws IOException {
-		writer = new FileWriter(config.getExportFile(), false);
+		writer = new FileWriter(config.getExExportFile(), false);
 		printer = new CSVPrinter(writer, format);
 	}
 

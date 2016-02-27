@@ -32,7 +32,7 @@ public abstract class AppendExporter extends AbstractExporter {
 		tryToWriteHeader();
 
 		log.info("Will appendly export {} to {}.", getSuffix(), config
-				.getExportFile().getAbsoluteFile());
+				.getExExportFile().getAbsoluteFile());
 	}
 
 	@Override
