@@ -8,15 +8,15 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import cz.martlin.kh.logic.export.AbstractExporter;
+import cz.martlin.kh.logic.export.AbstractEI;
 
 public class JExportFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 5550587803546176078L;
 
-	private final Set<AbstractExporter> exporters;
+	private final Set<AbstractEI> exporters;
 
-	public JExportFileChooser(Set<AbstractExporter> exporters, File selectedFile) {
+	public JExportFileChooser(Set<AbstractEI> exporters, File selectedFile) {
 		super();
 		this.exporters = exporters;
 
@@ -28,7 +28,7 @@ public class JExportFileChooser extends JFileChooser {
 		setFileSelectionMode(JFileChooser.FILES_ONLY);
 		setAcceptAllFileFilterUsed(false);
 
-		for (AbstractExporter exporter : exporters) {
+		for (AbstractEI exporter : exporters) {
 			FileFilter filter = new FileNameExtensionFilter(
 					exporter.getFormatDescription(), exporter.getSuffix());
 
@@ -41,7 +41,7 @@ public class JExportFileChooser extends JFileChooser {
 	public File getSelectedFileOrError() {
 		File selected = super.getSelectedFile();
 
-		AbstractExporter exporter = AbstractExporter.getBySuffix(exporters,
+		AbstractEI exporter = AbstractEI.getBySuffix(exporters,
 				selected);
 
 		if (exporter == null) {

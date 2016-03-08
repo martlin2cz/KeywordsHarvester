@@ -56,6 +56,11 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	public void interrupt() {
 		this.interrupted = true;
 	}
+	
+	@Override
+	public boolean isInterrupted() {
+		return interrupted;
+	}
 
 	/**
 	 * Gets data currently in process.
@@ -138,7 +143,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			log.info("Preparing next set to process with size {}", count);
 			tryToLog("Loading ", count, " related keywords...");
 
-			Set<String> keywords = data.getNextToProcess(count);
+			Set<String> keywords = data.getNextToProcess(count, this);
 			data.setToProcess(keywords);
 
 			log.info("Prepared next set to process with size {}",
@@ -262,6 +267,8 @@ public class TreeRelKeywsHarvest implements Interruptable {
 		data.addDone(done);
 
 		data.saveToDumpFile(config);
+
+		System.gc();
 
 		log.info(
 				"Completed one iteration with {} keywords. Now completelly done {}.",

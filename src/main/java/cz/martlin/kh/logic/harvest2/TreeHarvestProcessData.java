@@ -1,6 +1,7 @@
 package cz.martlin.kh.logic.harvest2;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,10 +13,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
+import cz.martlin.kh.logic.export.AbstractEI;
 import cz.martlin.kh.logic.harvest2.tree.BFSLazyTree;
 import cz.martlin.kh.logic.harvest2.tree.BFSLazyTreeIterator;
+import cz.martlin.kh.logic.utils.Interruptable;
 
 /**
  * Data object representing harvesting process.
@@ -60,6 +64,30 @@ public class TreeHarvestProcessData implements Serializable {
 	}
 
 	/**
+	 * Use rather factory methods. This sets restored keywords as again to
+	 * process, but (optionally) as done as well.
+	 * 
+	 * @param config
+	 * @param restored
+	 * @param makeThemDone
+	 */
+	private TreeHarvestProcessData(Config config, Set<Keyword> restored,
+			boolean makeThemDone) {
+
+		Set<String> keywordsSet = getKeywords(restored);
+		this.tree = new RelatedKeywordsTree(config, keywordsSet, this);
+		this.treeIterator = (BFSLazyTreeIterator) tree.iterator();
+
+		this.metadatas = new HashMap<>(restored.size());
+		this.done = new LinkedHashSet<>();
+
+		if (makeThemDone) {
+			justSimplyFokinAdd(restored);
+			done.addAll(keywordsSet);
+		}
+	}
+
+	/**
 	 * Use rather factory methods {@link #createNew(Config, Set)},
 	 * {@link #loadFromDumpFile(Config)},
 	 * {@link #importThem(Config, File, String)}.
@@ -85,8 +113,8 @@ public class TreeHarvestProcessData implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Set<String> getNextToProcess(int count) {
-		return treeIterator.next(count);
+	public Set<String> getNextToProcess(int count, Interruptable service) {
+		return treeIterator.next(count, service);
 	}
 
 	/**
@@ -434,16 +462,46 @@ public class TreeHarvestProcessData implements Serializable {
 	}
 
 	/**
-	 * Creates new instance with given config. The data are loaded from file
-	 * (see {@link Config#getQueuesDumpFile()}).
+	 * For given config creates new instance of data. If flag fromBackup is
+	 * true, data is loaded instead from {@link Config#getHwDataDumpFile()} from
+	 * {@link Config#getHwDataDumpBackupFile()}.
+	 * 
+	 * @param config
+	 * @param fromBackup
+	 * @return
+	 */
+	public static TreeHarvestProcessData loadFromDumpFile(Config config,
+			boolean fromBackup) {
+		TreeHarvestDataDumperInporter dump = new TreeHarvestDataDumperInporter(
+				config);
+		TreeHarvestProcessData data = dump.load(fromBackup);
+
+		return data;
+	}
+
+	/**
+	 * Creates new instance by loading yet done keywords from exported file and
+	 * making them to process again. But, sets them "done" (but, again,
+	 * "to process").
 	 * 
 	 * @param config
 	 * @return
 	 */
-	public static TreeHarvestProcessData loadFromDumpFile(Config config) {
-		TreeHarvestDataDumperInporter dump = new TreeHarvestDataDumperInporter(
-				config);
-		TreeHarvestProcessData data = dump.load();
+	public static TreeHarvestProcessData loadExported(Config config) {
+		Set<AbstractEI> exporters = StuffProvider.getExporters(config);
+		File file = config.getExExportFile();
+		AbstractEI importer = AbstractEI.getBySuffix(exporters, file);
+
+		Set<Keyword> keywords;
+
+		try {
+			keywords = importer.importKeywords();
+		} catch (IOException e) {
+			return null;
+		}
+
+		TreeHarvestProcessData data = new TreeHarvestProcessData(config,
+				keywords, true);
 
 		return data;
 	}

@@ -5,5 +5,4 @@ import java.util.Set;
 public interface ChildrenGenerator {
 
 	public Set<String> generate(String label);
-
 }

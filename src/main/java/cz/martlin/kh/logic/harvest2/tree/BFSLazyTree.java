@@ -68,7 +68,6 @@ public abstract class BFSLazyTree implements Serializable, Iterable<String> {
 	public void calculateNextChildren() {
 		String next = toChildify.poll();
 		Set<String> nexts = calculateChildren(next);
-
 		toProcess.addAll(nexts);
 	}
 

@@ -39,6 +39,16 @@ public class Picworkflower implements Interruptable {
 			currentQuery.interrupt();
 		}
 	}
+	
+
+	@Override
+	public boolean isInterrupted() {
+		if (currentQuery != null) {
+			return currentQuery.isInterrupted();
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Completelly runs query. It is not required no other initialization or

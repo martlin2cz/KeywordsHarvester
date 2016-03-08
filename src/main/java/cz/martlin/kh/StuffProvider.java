@@ -6,10 +6,10 @@ import java.util.Set;
 import cz.martlin.kh.gui.JMainFrame;
 import cz.martlin.kh.gui.MainFrameHarvestListener;
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.export.AbstractExporter;
-import cz.martlin.kh.logic.export.CSVExporter;
+import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.CSVExporterImporter;
 import cz.martlin.kh.logic.export.Exporter;
-import cz.martlin.kh.logic.export.XLSXExporter;
+import cz.martlin.kh.logic.export.XLSXExporterImporter;
 import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.picwf.Picworkflower;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -107,9 +107,9 @@ public class StuffProvider {
 	 * 
 	 * @return
 	 */
-	public static Set<AbstractExporter> getExporters(Config config) {
+	public static Set<AbstractEI> getExporters(Config config) {
 
-		Set<AbstractExporter> result = new LinkedHashSet<>();
+		Set<AbstractEI> result = new LinkedHashSet<>();
 		initializeExporters(config, result);
 
 		return result;
@@ -135,9 +135,9 @@ public class StuffProvider {
 	 * @param exporters
 	 */
 	private static void initializeExporters(Config config,
-			Set<AbstractExporter> exporters) {
+			Set<AbstractEI> exporters) {
 
-		exporters.add(new XLSXExporter(config));
-		exporters.add(new CSVExporter(config));
+		exporters.add(new XLSXExporterImporter(config));
+		exporters.add(new CSVExporterImporter(config));
 	}
 }

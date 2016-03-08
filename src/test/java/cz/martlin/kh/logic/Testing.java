@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import cz.martlin.kh.logic.exception.NetworkException;
-import cz.martlin.kh.logic.export.AbstractExporter;
-import cz.martlin.kh.logic.export.CSVExporter;
-import cz.martlin.kh.logic.export.XLSXExporter;
+import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.CSVExporterImporter;
+import cz.martlin.kh.logic.export.XLSXExporterImporter;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -26,18 +26,19 @@ public class Testing {
 	protected static final ShutterstockWrapper ssw = //
 	new ShutterstockWrapper(config);
 
-	protected static final CSVExporter csv = //
-	new CSVExporter(config);
+	protected static final CSVExporterImporter csv = //
+	new CSVExporterImporter(config);
 
-	protected static final XLSXExporter xlsx = //
-	new XLSXExporter(config);
+	protected static final XLSXExporterImporter xlsx = //
+	new XLSXExporterImporter(config);
 
 	public static void main(String[] args) {
 		System.out.println("Uncomment something to run test:");
 
 		 //config.setExportFile(new File("test.csv"));
+
 		new ConfigStorerLoader().save(config);
-//		System.out.println("Config saved.");
+		System.out.println("Config saved.");
 
 		// testExporter(config, csv);
 
@@ -59,11 +60,11 @@ public class Testing {
 
 	}
 
-	protected static void testExporter(Config config, AbstractExporter export) {
+	protected static void testExporter(Config config, AbstractEI export) {
 		try {
 			System.out.println("init:" + export + ", into: "
 					+ config.getExExportFile().getPath());
-			export.initializeExporter();
+			export.initializeExporterToWrite();
 
 			Set<Keyword> keywords1 = TestingKeywords.createTestingKeywordsA();
 			System.out.println("export1:");
@@ -77,7 +78,7 @@ public class Testing {
 			export.export(keywords2);
 
 			System.out.println("finish:");
-			export.finishExporter();
+			export.finishExporterToWrite();
 
 			System.out.println("done: " + export);
 		} catch (Exception e) {

@@ -21,8 +21,9 @@ import javax.swing.filechooser.FileFilter;
 import layout.SpringUtilities;
 import cz.martlin.kh.KHMain;
 import cz.martlin.kh.StuffProvider;
+import cz.martlin.kh.KHMain.LoggingUncaughtExceptionHandler;
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.export.AbstractExporter;
+import cz.martlin.kh.logic.export.AbstractEI;
 import cz.martlin.kh.logic.harvest2.TreeHarvestThread;
 import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
 import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
@@ -51,6 +52,8 @@ public class JMainFrame extends JFrame {
 	private JButton stopButt;
 	private JButton loadPrevButt;
 	private JButton importButt;
+	private JButton loadBackupButt;
+	private JButton importExportedButt;
 	private JLabel outputFileLbl;
 	private JButton changeFileButt;
 	private JLabel waitingLbl;
@@ -68,7 +71,7 @@ public class JMainFrame extends JFrame {
 
 		updateDataInFrame();
 
-		Dimension size = new Dimension(500, 300);
+		Dimension size = new Dimension(500, 350);
 		setPreferredSize(size);
 		setMinimumSize(size);
 
@@ -98,10 +101,19 @@ public class JMainFrame extends JFrame {
 		stopButt.addActionListener(new StopButtActionListener());
 		pane.add(stopButt);
 
-		// load previous and import
+		// load previous and import butts
 		loadPrevButt = new JButton("Open previous harvest");
 		loadPrevButt.addActionListener(new LoadPreviousButtActionListener());
 		pane.add(loadPrevButt);
+
+		importExportedButt = new JButton("Import exported");
+		importExportedButt
+				.addActionListener(new ImportExportedButtActionListener());
+		pane.add(importExportedButt);
+
+		loadBackupButt = new JButton("Open backup of previous");
+		loadBackupButt.addActionListener(new LoadBackupButtActionListener());
+		pane.add(loadBackupButt);
 
 		importButt = new JButton("Import keywords");
 		importButt.addActionListener(new ImportKeywordsButtActionListener());
@@ -141,7 +153,7 @@ public class JMainFrame extends JFrame {
 		pane.add(statusLbl);
 		pane.add(new JLabel());
 
-		SpringUtilities.makeCompactGrid(pane, 6, 2, 10, 10, 10, 15);
+		SpringUtilities.makeCompactGrid(pane, 7, 2, 10, 10, 10, 15);
 
 	}
 
@@ -180,6 +192,10 @@ public class JMainFrame extends JFrame {
 
 		loadPrevButt.setEnabled(!isRunning);
 		importButt.setEnabled(!isRunning);
+
+		loadBackupButt.setEnabled(!isRunning);
+		importExportedButt.setEnabled(!isRunning);
+
 		changeFileButt.setEnabled(!isRunning);
 		editQueueButt.setEnabled(!isRunning);
 		viewDoneButt.setEnabled(!isRunning);
@@ -231,7 +247,7 @@ public class JMainFrame extends JFrame {
 	 */
 	public void loadPreviousHarvest() {
 		TreeHarvestProcessData newData = TreeHarvestProcessData
-				.loadFromDumpFile(config);
+				.loadFromDumpFile(config, false);
 		if (newData == null) {
 			error("Could not load previous harvest. Check file "
 					+ config.getHwDataDumpFile().getPath());
@@ -294,6 +310,38 @@ public class JMainFrame extends JFrame {
 	}
 
 	/**
+	 * Imports files from exported.
+	 */
+	public void importExported() {
+		TreeHarvestProcessData newData = TreeHarvestProcessData
+				.loadExported(config);
+		if (newData == null) {
+			error("Could not load exported keywords. Try to check file "
+					+ config.getExExportFile().getPath());
+			return;
+		}
+
+		data = newData;
+		updateDataInFrame();
+	}
+
+	/**
+	 * Imports keywords from backup of keywords.
+	 */
+	public void loadBackupOfPrevious() {
+		TreeHarvestProcessData newData = TreeHarvestProcessData
+				.loadFromDumpFile(config, true);
+		if (newData == null) {
+			error("Could not load backup of previous harvest. Check file "
+					+ config.getHwDataDumpBackupFile().getPath());
+			return;
+		}
+
+		data = newData;
+		updateDataInFrame();
+	}
+
+	/**
 	 * Creates file chooser for import.
 	 * 
 	 * @return
@@ -325,7 +373,7 @@ public class JMainFrame extends JFrame {
 	 * @return
 	 */
 	private JExportFileChooser createExportFileChooser(File selectedFile) {
-		Set<AbstractExporter> exporters = StuffProvider.getExporters(config);
+		Set<AbstractEI> exporters = StuffProvider.getExporters(config);
 
 		JExportFileChooser chooser = new JExportFileChooser(exporters,
 				selectedFile);
@@ -347,6 +395,7 @@ public class JMainFrame extends JFrame {
 
 		public StopThread(JMainFrame frame) {
 			super("StopButtT");
+			setUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
 		}
 
 		public void run() {
@@ -379,6 +428,7 @@ public class JMainFrame extends JFrame {
 		public StartThread(JMainFrame frame) {
 			super("StartButtT");
 			this.frame = frame;
+			setUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
 		}
 
 		public void run() {
@@ -459,6 +509,24 @@ public class JMainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			start();
+		}
+
+	}
+
+	public class LoadBackupButtActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			loadBackupOfPrevious();
+		}
+
+	}
+
+	public class ImportExportedButtActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			importExported();
 		}
 
 	}

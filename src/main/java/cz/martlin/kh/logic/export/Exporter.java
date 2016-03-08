@@ -20,9 +20,9 @@ import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
 public class Exporter {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private final AbstractExporter exporter;
+	private final AbstractEI exporter;
 
-	public Exporter(Config config, Set<AbstractExporter> exporters) {
+	public Exporter(Config config, Set<AbstractEI> exporters) {
 		super();
 		this.exporter = chooseExporter(config, exporters);
 	}
@@ -36,10 +36,10 @@ public class Exporter {
 	 * @param exporters
 	 * @return
 	 */
-	private AbstractExporter chooseExporter(Config config,
-			Set<AbstractExporter> exporters) {
+	private AbstractEI chooseExporter(Config config,
+			Set<AbstractEI> exporters) {
 
-		AbstractExporter export = AbstractExporter.getBySuffix(exporters,
+		AbstractEI export = AbstractEI.getBySuffix(exporters,
 				config.getExExportFile());
 
 		if (export == null) {
@@ -61,10 +61,10 @@ public class Exporter {
 	 */
 	public void initializeExporter(TreeHarvestProcessData data)
 			throws IOException {
-		exporter.initializeExporter();
+		exporter.initializeExporterToWrite();
 
-		if (exporter instanceof AppendExporter) {
-			AppendExporter ae = (AppendExporter) exporter;
+		if (exporter instanceof AppendExporterImporter) {
+			AppendExporterImporter ae = (AppendExporterImporter) exporter;
 			ae.exportInitial(data.getDone());
 		}
 	}
@@ -81,10 +81,10 @@ public class Exporter {
 			TreeHarvestProcessData data) {
 
 		try {
-			if (exporter instanceof AppendExporter) {
-				return exportBatch((AppendExporter) exporter, keywords, data);
+			if (exporter instanceof AppendExporterImporter) {
+				return exportBatch((AppendExporterImporter) exporter, keywords, data);
 			} else {
-				return exportAll((RewriteExporter) exporter, keywords, data);
+				return exportAll((RewriteExporterImporter) exporter, keywords, data);
 			}
 		} catch (IOException e) {
 			log.error("An error occured during exporting", e);
@@ -101,7 +101,7 @@ public class Exporter {
 	 * 
 	 * @throws IOException
 	 */
-	private Set<Keyword> exportBatch(AppendExporter appendExporter,
+	private Set<Keyword> exportBatch(AppendExporterImporter appendExporter,
 			Set<Keyword> batch, TreeHarvestProcessData data) throws IOException {
 
 		log.info("Exporting batch of {} keywords: {}", batch.size(), batch);
@@ -124,7 +124,7 @@ public class Exporter {
 	 * 
 	 * @throws IOException
 	 */
-	private Set<Keyword> exportAll(RewriteExporter rewriteExport,
+	private Set<Keyword> exportAll(RewriteExporterImporter rewriteExport,
 			Set<Keyword> newToExport, TreeHarvestProcessData data)
 			throws IOException {
 

@@ -73,6 +73,11 @@ public class PicworkflowQuery implements Interruptable {
 		log.debug("Query interrupted, awaiting timeout step");
 	}
 
+	@Override
+	public boolean isInterrupted() {
+		return interrupted;
+	}
+
 	/**
 	 * Runs querying. Sends data to server and awaits until all responses
 	 * returns back. If no in specified (by Config) timeout, skips.
@@ -270,7 +275,5 @@ public class PicworkflowQuery implements Interruptable {
 				"Keyword {}'s metadata successfully loaded and parsed (done {} of {})",
 				keyword, done.size(), required.size());
 	}
-
-	
 
 }

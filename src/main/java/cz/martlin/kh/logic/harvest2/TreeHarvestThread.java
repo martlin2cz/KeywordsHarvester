@@ -3,6 +3,7 @@ package cz.martlin.kh.logic.harvest2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.martlin.kh.KHMain.LoggingUncaughtExceptionHandler;
 import cz.martlin.kh.logic.utils.Interruptable;
 
 /**
@@ -23,6 +24,8 @@ public class TreeHarvestThread extends Thread implements Interruptable {
 
 		this.harvest = harvest;
 		this.data = data;
+
+		setUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
 	}
 
 	@Override
@@ -42,6 +45,12 @@ public class TreeHarvestThread extends Thread implements Interruptable {
 		harvest.tryToLog("Stopped");
 	}
 
+
+	@Override
+	public boolean isInterrupted() {
+		return harvest.isInterrupted();
+	}
+	
 	@Override
 	public void run() {
 		log.info("Harvester in thread started");

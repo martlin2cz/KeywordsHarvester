@@ -13,4 +13,11 @@ public interface Interruptable {
 	 */
 	public void interrupt();
 
+	/**
+	 * Returns whether have been service interrupted or not.
+	 * 
+	 * @return
+	 */
+	public boolean isInterrupted();
+
 }

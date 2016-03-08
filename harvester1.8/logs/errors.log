@@ -1,0 +1,21 @@
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.export.Exporter in StartButtT - Exporter cz.martlin.kh.logic.export.XLSXExporterImporter@7815f28d ready to exporter into file /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.harvest2.TreeHarvestThread in StartButtT - Harvester in thread started
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in StartButtT - File /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx have been backed up into file /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx_Tue Mar 08 21:30:09 CET 2016.xlsx
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in StartButtT - Will rewritelly export xlsx to /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx.
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest in StartButtT - Harvesting started, now done 76304 keywords and 76304 is waiting.
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest in StartButtT - Preparing next set to process with size 60
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest in StartButtT - Prepared next set to process with size 60
+08.03.2016 21:30:09 [INFO] from cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest in StartButtT - Picworkflowing of 60 keywords
+08.03.2016 21:30:10 [INFO] from cz.martlin.kh.logic.picwf.PicworkflowQuery in StartButtT - Querying to get metadata of [Examining, isolated, concept, Medical Equipment, lids, Equipment, eyeball, element, Patience, Magnifying Glass, Close-up, circle, Females, Medical Exam, Eye Exam, health, Healthy Lifestyle, background, Eye Test Equipment, bright, Medical Laser, Healthcare And Medicine, graphic, design, eye, illustration, human, Blue Eyes, Human Eye, Occupation, Patient, black, idea, Women, Place of Work, 10, anatomy, Hair Back, icon, Optometrist, curve, Body Care, Eyesight, abstract, Professional Occupation, lens, Laser, Clinic, Medicine, Profile View, People, glasses, business, correction, eps, Young Women, emblem, canister, Polymer, Food And Drink] started
+08.03.2016 21:30:13 [INFO] from cz.martlin.kh.logic.harvest2.TreeHarvestThread in AWT-EventQueue-0 - Thread interrupt invoked
+08.03.2016 21:30:13 [INFO] from cz.martlin.kh.logic.harvest2.TreeHarvestThread in AWT-EventQueue-0 - Thread interrupt completed
+08.03.2016 21:30:13 [WARN] from cz.martlin.kh.logic.harvest2.TreeHarvestDataDumperInporter in StopButtT - Cannot backup file /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/harvester1.8/dump.bin to /home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/harvester1.8/dump_backup.bin
+java.io.FileNotFoundException: dump.bin (Adresář nebo soubor neexistuje)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at cz.martlin.kh.logic.harvest2.TreeHarvestDataDumperInporter.tryToBackUp(TreeHarvestDataDumperInporter.java:73)
+	at cz.martlin.kh.logic.harvest2.TreeHarvestDataDumperInporter.save(TreeHarvestDataDumperInporter.java:51)
+	at cz.martlin.kh.logic.harvest2.TreeHarvestProcessData.saveToDumpFile(TreeHarvestProcessData.java:447)
+	at cz.martlin.kh.gui.JMainFrame$StopThread.run(JMainFrame.java:418)
+08.03.2016 21:30:14 [INFO] from cz.martlin.kh.logic.harvest2.TreeHarvestDataDumperInporter in StopButtT - Harvest data saved into file dump.bin

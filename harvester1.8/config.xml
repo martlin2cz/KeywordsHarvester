@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config description="Keywords Harvester configuration" format="Fry" type="cz.martlin.kh.logic.Config">
+  <waitStep>100</waitStep>
+  <skSamplesCount>1</skSamplesCount>
+  <skWaitBetweenServices>1000</skWaitBetweenServices>
+  <ssClientID>60e093aa3cc83d1143c6</ssClientID>
+  <ssClientSecret>1aac92eb001e1cb2aec0f6739a9ecabe16e35d05</ssClientSecret>
+  <pwQueryTimeout>10000</pwQueryTimeout>
+  <pwFailedFile>picworkflow-failed.csv</pwFailedFile>
+  <pwFailedWait>600000</pwFailedWait>
+  <exExportFile>/home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx</exExportFile>
+  <hwProcessIterationSize>60</hwProcessIterationSize>
+  <hwDataDumpFile>dump.bin</hwDataDumpFile>
+  <hwDataDumpBackupFile>dump_backup.bin</hwDataDumpBackupFile>
+</config>

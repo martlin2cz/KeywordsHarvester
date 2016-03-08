@@ -73,7 +73,7 @@ public class LazyTreeTest {
 		assertEquals("foo00", iter.next());
 		assertEquals("foo01", iter.next());
 
-		iter.next(9);
+		iter.next(9, null);
 		// foo02, foo03, foo10, foo11, foo12, foo13, foo20, foo21, foo22,
 
 		assertEquals("foo23", iter.next());

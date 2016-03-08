@@ -72,6 +72,11 @@ public class Config implements Serializable, JaxonSerializable {
 	 */
 	private File hwDataDumpFile = new File("dump.bin");
 
+	/**
+	 * File to be overriden by {@link #hwDataDumpFile} before is written.
+	 */
+	private File hwDataDumpBackupFile = new File("dump_backup.bin");
+
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Config() {
@@ -166,6 +171,14 @@ public class Config implements Serializable, JaxonSerializable {
 		this.hwDataDumpFile = hwDataDumpFile;
 	}
 
+	public File getHwDataDumpBackupFile() {
+		return hwDataDumpBackupFile;
+	}
+
+	public void setHwDataDumpBackupFile(File hwDataDumpBackupFile) {
+		this.hwDataDumpBackupFile = hwDataDumpBackupFile;
+	}
+
 	public void setTo(Config other) {
 		waitStep = other.waitStep;
 		skSamplesCount = other.skSamplesCount;
@@ -178,6 +191,7 @@ public class Config implements Serializable, JaxonSerializable {
 		exExportFile = other.exExportFile;
 		hwProcessIterationSize = other.hwProcessIterationSize;
 		hwDataDumpFile = other.hwDataDumpFile;
+		hwDataDumpBackupFile = other.hwDataDumpBackupFile;
 	}
 
 	@Override
@@ -186,6 +200,10 @@ public class Config implements Serializable, JaxonSerializable {
 		int result = 1;
 		result = prime * result
 				+ ((exExportFile == null) ? 0 : exExportFile.hashCode());
+		result = prime
+				* result
+				+ ((hwDataDumpBackupFile == null) ? 0 : hwDataDumpBackupFile
+						.hashCode());
 		result = prime * result
 				+ ((hwDataDumpFile == null) ? 0 : hwDataDumpFile.hashCode());
 		result = prime * result + hwProcessIterationSize;
@@ -196,9 +214,9 @@ public class Config implements Serializable, JaxonSerializable {
 		result = prime * result + skSamplesCount;
 		result = prime * result + skWaitBetweenServices;
 		result = prime * result
-				+ ((ssClientSecret == null) ? 0 : ssClientSecret.hashCode());
-		result = prime * result
 				+ ((ssClientID == null) ? 0 : ssClientID.hashCode());
+		result = prime * result
+				+ ((ssClientSecret == null) ? 0 : ssClientSecret.hashCode());
 		result = prime * result + waitStep;
 		return result;
 	}
@@ -216,6 +234,11 @@ public class Config implements Serializable, JaxonSerializable {
 			if (other.exExportFile != null)
 				return false;
 		} else if (!exExportFile.equals(other.exExportFile))
+			return false;
+		if (hwDataDumpBackupFile == null) {
+			if (other.hwDataDumpBackupFile != null)
+				return false;
+		} else if (!hwDataDumpBackupFile.equals(other.hwDataDumpBackupFile))
 			return false;
 		if (hwDataDumpFile == null) {
 			if (other.hwDataDumpFile != null)
@@ -237,15 +260,15 @@ public class Config implements Serializable, JaxonSerializable {
 			return false;
 		if (skWaitBetweenServices != other.skWaitBetweenServices)
 			return false;
-		if (ssClientSecret == null) {
-			if (other.ssClientSecret != null)
-				return false;
-		} else if (!ssClientSecret.equals(other.ssClientSecret))
-			return false;
 		if (ssClientID == null) {
 			if (other.ssClientID != null)
 				return false;
 		} else if (!ssClientID.equals(other.ssClientID))
+			return false;
+		if (ssClientSecret == null) {
+			if (other.ssClientSecret != null)
+				return false;
+		} else if (!ssClientSecret.equals(other.ssClientSecret))
 			return false;
 		if (waitStep != other.waitStep)
 			return false;
@@ -262,7 +285,7 @@ public class Config implements Serializable, JaxonSerializable {
 				+ ", pwFailedWait=" + pwFailedWait + ", exExportFile="
 				+ exExportFile + ", hwProcessIterationSize="
 				+ hwProcessIterationSize + ", hwDataDumpFile=" + hwDataDumpFile
-				+ "]";
+				+ ", hwDataDumpBackupFile=" + hwDataDumpBackupFile + "]";
 	}
 
 	/**

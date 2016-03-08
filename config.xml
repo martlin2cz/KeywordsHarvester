@@ -11,4 +11,5 @@
   <exExportFile>output.xlsx</exExportFile>
   <hwProcessIterationSize>60</hwProcessIterationSize>
   <hwDataDumpFile>dump.bin</hwDataDumpFile>
+  <hwDataDumpBackupFile>dump_backup.bin</hwDataDumpBackupFile>
 </config>

@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -26,6 +28,7 @@ import cz.martlin.kh.logic.Config;
  * 
  */
 public class TreeHarvestDataDumperInporter {
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private final Config config;
@@ -35,14 +38,20 @@ public class TreeHarvestDataDumperInporter {
 	}
 
 	/**
-	 * Saves given data into file {@link Config#getQueuesDumpFile()}.
+	 * Saves given data into file {@link Config#getHwDataDumpFile()} (and, if
+	 * can, does the backup of the file before it is overriden).
 	 * 
 	 * @param data
 	 * @return true if success.
 	 */
 	public boolean save(TreeHarvestProcessData data) {
+		File file = config.getHwDataDumpFile();
+		File backup = config.getHwDataDumpBackupFile();
+
+		tryToBackUp(file, backup);
+
 		try {
-			File file = config.getHwDataDumpFile();
+
 			writeToBIN(file, data);
 
 			log.info("Harvest data saved into file {}", file);
@@ -50,6 +59,29 @@ public class TreeHarvestDataDumperInporter {
 		} catch (Exception e) {
 			log.error("Error during saving harvest data", e);
 			return false;
+		}
+	}
+
+	/**
+	 * Tries to do the backup of given file.
+	 */
+	private void tryToBackUp(File file, File backup) {
+		InputStream ins = null;
+		OutputStream ous = null;
+
+		try {
+			ins = new FileInputStream(file);
+			ous = new FileOutputStream(backup);
+			IOUtils.copy(ins, ous);
+
+			log.info("Backed up file " + file.getAbsolutePath() + " to "
+					+ backup.getAbsolutePath());
+		} catch (IOException e) {
+			log.warn("Cannot backup file " + file.getAbsolutePath() + " to "
+					+ backup.getAbsolutePath(), e);
+		} finally {
+			IOUtils.closeQuietly(ins);
+			IOUtils.closeQuietly(ous);
 		}
 	}
 
@@ -83,8 +115,14 @@ public class TreeHarvestDataDumperInporter {
 	 * 
 	 * @return data or null if fails.
 	 */
-	public TreeHarvestProcessData load() {
-		File file = config.getHwDataDumpFile();
+	public TreeHarvestProcessData load(boolean backup) {
+		File file;
+		if (!backup) {
+			file = config.getHwDataDumpFile();
+		} else {
+			file = config.getHwDataDumpBackupFile();
+		}
+
 		try {
 			TreeHarvestProcessData data = loadFromBIN(file);
 

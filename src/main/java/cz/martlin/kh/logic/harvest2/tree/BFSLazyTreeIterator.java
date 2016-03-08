@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import cz.martlin.kh.logic.utils.Interruptable;
+
 /**
  * Iterates over {@link BFSLazyTree} instance. The method next does
  * Breadth-first-search throught the tree. When one layer is completed, method
@@ -38,10 +40,21 @@ public class BFSLazyTreeIterator implements Serializable, Iterator<String> {
 		return next;
 	}
 
-	public Set<String> next(int count) {
+	/**
+	 * Loads next count items, or less if have been interrupt interrupted
+	 * 
+	 * @param count
+	 * @param interrupt
+	 * @return
+	 */
+	public Set<String> next(int count, Interruptable interrupt) {
 		Set<String> result = new LinkedHashSet<>(count);
 
 		for (int i = 0; i < count; i++) {
+			if (interrupt != null && interrupt.isInterrupted()) {
+				return result;
+			}
+
 			String next = next();
 			result.add(next);
 		}
