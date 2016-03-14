@@ -56,9 +56,10 @@ public class NetworkRequest {
 	public void setBasicAuth(String username, String password) {
 		String authString = username + ":" + password;
 
-		byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
-
-		String authStringEnc = new String(authEncBytes);
+		String authStringEnc = javax.xml.bind.DatatypeConverter.printBase64Binary(authString.getBytes());
+		// TODO FIXME problem with java 1.7 WTF 
+		// byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
+		//String authStringEnc = new String(authEncBytes);
 
 		conn.setRequestProperty("Authorization", "Basic " + authStringEnc);
 

@@ -1,0 +1,63 @@
+12.03.2016 14:17:29 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457788648866.csv.
+12.03.2016 14:17:29 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+12.03.2016 14:17:29 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+12.03.2016 14:17:29 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457788649323.xlsx.
+12.03.2016 14:17:30 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+12.03.2016 14:17:30 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457788649323.xlsx.
+12.03.2016 14:17:30 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+12.03.2016 21:17:51 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457813870952.csv.
+12.03.2016 21:17:51 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+12.03.2016 21:17:51 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+12.03.2016 21:17:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457813871370.xlsx.
+12.03.2016 21:17:52 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+12.03.2016 21:17:52 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457813871370.xlsx.
+12.03.2016 21:17:52 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+12.03.2016 21:51:41 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457815901503.csv.
+12.03.2016 21:51:41 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+12.03.2016 21:51:41 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+12.03.2016 21:51:41 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457815901911.xlsx.
+12.03.2016 21:51:42 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+12.03.2016 21:51:42 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457815901911.xlsx.
+12.03.2016 21:51:42 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 05:02:02 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457928122251.csv.
+14.03.2016 05:02:02 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 05:02:02 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 05:02:02 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457928122965.xlsx.
+14.03.2016 05:02:05 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 05:02:05 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457928122965.xlsx.
+14.03.2016 05:02:06 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 05:11:03 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457928663264.csv.
+14.03.2016 05:11:03 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 05:11:03 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 05:11:03 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457928663661.xlsx.
+14.03.2016 05:11:04 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 05:11:04 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457928663661.xlsx.
+14.03.2016 05:11:04 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 05:11:51 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457928710602.csv.
+14.03.2016 05:11:51 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 05:11:51 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 05:11:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457928711044.xlsx.
+14.03.2016 05:11:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 05:11:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457928711044.xlsx.
+14.03.2016 05:11:52 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 21:04:24 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457985864287.csv.
+14.03.2016 21:04:25 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 21:04:25 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 21:04:25 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457985865076.xlsx.
+14.03.2016 21:04:26 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 21:04:26 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457985865076.xlsx.
+14.03.2016 21:04:27 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 22:30:50 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457991050025.csv.
+14.03.2016 22:30:50 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 22:30:50 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 22:30:50 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457991050421.xlsx.
+14.03.2016 22:30:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 22:30:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457991050421.xlsx.
+14.03.2016 22:30:51 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.
+14.03.2016 22:57:41 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Will appendly export csv to /tmp/testing-export1457992660735.csv.
+14.03.2016 22:57:41 [INFO] from cz.martlin.kh.logic.export.CSVExporterImporter in main - Appending exporter closed.
+14.03.2016 22:57:41 [WARN] from cz.martlin.kh.logic.export.CSVExporterImporter in main - File check out of order. Assuming file is OK.
+14.03.2016 22:57:41 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will rewritelly export xlsx to /tmp/testing-export1457992661545.xlsx.
+14.03.2016 22:57:43 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting export closed.
+14.03.2016 22:57:43 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Will import from /tmp/testing-export1457992661545.xlsx.
+14.03.2016 22:57:43 [INFO] from cz.martlin.kh.logic.export.XLSXExporterImporter in main - Rewriting import closed.

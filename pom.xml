@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>cz.martlin</groupId>
 			<artifactId>jaxon</artifactId>
-			<version>0.3.1</version>
+			<version>0.4-jv7</version>
 		</dependency>
 
 	</dependencies>

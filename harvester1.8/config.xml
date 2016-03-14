@@ -8,7 +8,7 @@
   <pwQueryTimeout>10000</pwQueryTimeout>
   <pwFailedFile>picworkflow-failed.csv</pwFailedFile>
   <pwFailedWait>600000</pwFailedWait>
-  <exExportFile>/home/martin/Programovani/Java/newGenerationWorkspace/KeywordsHarvester/output.xlsx</exExportFile>
+  <exExportFile>output.xlsx</exExportFile>
   <hwProcessIterationSize>60</hwProcessIterationSize>
   <hwDataDumpFile>dump.bin</hwDataDumpFile>
   <hwDataDumpBackupFile>dump_backup.bin</hwDataDumpBackupFile>

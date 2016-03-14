@@ -32,15 +32,15 @@
 	
 
 
-	<root level="ERROR">
-		<appender-ref ref="ERRORS" level="ERROR" />
+	<root level="WARN">
+<!-- 		<appender-ref ref="ERRORS" level="ERROR" /> -->
 		<appender-ref ref="CONSOLE" />
 	</root>
 
-	<root level="INFO">
-		<appender-ref ref="FILE" level="INFO" />
-		<appender-ref ref="CONSOLE" />
-	</root>
+<!-- 	<root level="INFO"> -->
+<!-- 		<appender-ref ref="FILE" level="INFO" /> -->
+<!-- 		<appender-ref ref="CONSOLE" /> -->
+<!-- 	</root> -->
 
 
 	<!-- <logger name="" level="ERROR"> -->
