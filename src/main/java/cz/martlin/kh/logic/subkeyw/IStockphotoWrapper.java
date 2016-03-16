@@ -17,7 +17,7 @@ import cz.martlin.kh.logic.exception.ResultParserException;
 import cz.martlin.kh.logic.utils.NetworkRequest;
 
 /**
- * @see http://www.istockphoto.com/search/jsondoc#31search-term
+ * @see "http://www.istockphoto.com/search/jsondoc#31search-term"
  * @author martin
  * 
  */

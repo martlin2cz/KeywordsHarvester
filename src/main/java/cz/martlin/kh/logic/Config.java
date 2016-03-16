@@ -3,16 +3,13 @@ package cz.martlin.kh.logic;
 import java.io.File;
 import java.io.Serializable;
 
-import cz.martlin.jaxon.jaxon.JaxonSerializable;
-import cz.martlin.kh.logic.utils.ConfigStorerLoader;
-
 /**
  * Application configuration.
  * 
  * @author martin
  * 
  */
-public class Config implements Serializable, JaxonSerializable {
+public class Config implements Serializable/*, JaxonSerializable*/ {
 	private static final long serialVersionUID = -6585645414753714922L;
 
 	/**
@@ -289,23 +286,20 @@ public class Config implements Serializable, JaxonSerializable {
 	}
 
 	/**
-	 * Tries to load configuration from file. If succeeds, returns it. If not,
-	 * returns default instance.
+	 * Creates new Config.
 	 * 
 	 * @return
 	 */
 	public static Config loadOrDefault() {
 		Config config = new Config();
 
-		ConfigStorerLoader csl = new ConfigStorerLoader();
-		csl.load(config);
 
 		return config;
 	}
 
-	@Override
-	public String jaxonDescription() {
-		return "Keywords Harvester configuration";
-	}
+//	@Override
+//	public String jaxonDescription() {
+//		return "Keywords Harvester configuration";
+//	}
 
 }

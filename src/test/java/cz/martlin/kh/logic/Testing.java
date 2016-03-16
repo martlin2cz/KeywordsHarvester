@@ -1,6 +1,5 @@
 package cz.martlin.kh.logic;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
 import cz.martlin.kh.logic.subkeyw.IStockphotoWrapper;
 import cz.martlin.kh.logic.subkeyw.ShutterstockWrapper;
-import cz.martlin.kh.logic.utils.ConfigStorerLoader;
 
 @Deprecated
 public class Testing {
@@ -37,8 +35,8 @@ public class Testing {
 
 		 //config.setExportFile(new File("test.csv"));
 
-		new ConfigStorerLoader().save(config);
-		System.out.println("Config saved.");
+//		new ConfigStorerLoader().save(config);
+//		System.out.println("Config saved.");
 
 		// testExporter(config, csv);
 
@@ -137,27 +135,27 @@ public class Testing {
 		}
 	}
 
-	public static void testConfigLoadStore() {
-		ConfigStorerLoader csl = new ConfigStorerLoader();
-
-		Config oldConfig = TestingKeywords.createTestingConfig();
-		csl.save(oldConfig);
-
-		Config newConfig = new Config();
-		csl.load(newConfig);
-
-		if (!oldConfig.equals(newConfig)) {
-			System.err.println("Saved and loaded configs are different!");
-			System.err.println("Saved:  " + oldConfig.toString());
-			System.err.println("Loaded: " + newConfig.toString());
-		} else {
-			System.out.println("Yeah, loaded and saved configs are same");
-		}
-
-		csl.save(config);
-		System.out.println("Default config saved over testing.");
-
-	}
+//	public static void testConfigLoadStore() {
+//		ConfigStorerLoader csl = new ConfigStorerLoader();
+//
+//		Config oldConfig = TestingKeywords.createTestingConfig();
+//		csl.save(oldConfig);
+//
+//		Config newConfig = new Config();
+//		csl.load(newConfig);
+//
+//		if (!oldConfig.equals(newConfig)) {
+//			System.err.println("Saved and loaded configs are different!");
+//			System.err.println("Saved:  " + oldConfig.toString());
+//			System.err.println("Loaded: " + newConfig.toString());
+//		} else {
+//			System.out.println("Yeah, loaded and saved configs are same");
+//		}
+//
+//		csl.save(config);
+//		System.out.println("Default config saved over testing.");
+//
+//	}
 
 	public static void testPicworkflowStability(Config config) {
 		PicworkflowStabilityTester test = new PicworkflowStabilityTester(config);

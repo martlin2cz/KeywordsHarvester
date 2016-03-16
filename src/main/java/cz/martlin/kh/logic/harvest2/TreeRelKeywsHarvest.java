@@ -134,7 +134,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 
 /**
 	 * Creates next set of keywords to process. This is set 
-	 * to data by {@link TreeHarvestProcessData#setToProcess(Set)).
+	 * to data by {@link TreeHarvestProcessData#setToProcess(Set)}.
 	 * @param data
 	 */
 	private void createNextToProcess(TreeHarvestProcessData data) {

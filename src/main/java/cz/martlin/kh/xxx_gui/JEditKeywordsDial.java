@@ -1,4 +1,4 @@
-package cz.martlin.kh.gui;
+package cz.martlin.kh.xxx_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

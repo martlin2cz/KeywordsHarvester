@@ -3,8 +3,6 @@ package cz.martlin.kh;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cz.martlin.kh.gui.JMainFrame;
-import cz.martlin.kh.gui.MainFrameHarvestListener;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.export.AbstractEI;
 import cz.martlin.kh.logic.export.CSVExporterImporter;
@@ -53,11 +51,12 @@ public class StuffProvider {
 	 * @param frame
 	 * @return
 	 */
-	public static TreeRelKeywsHarvest createHarvester(Config config,
-			JMainFrame frame) {
-		MainFrameHarvestListener listener = new MainFrameHarvestListener(frame);
-		return new TreeRelKeywsHarvest(config, listener);
-	}
+//	@Deprecated
+//	public static TreeRelKeywsHarvest createHarvester(Config config,
+//			JMainFrame frame) {
+//		MainFrameHarvestListener listener = new MainFrameHarvestListener(frame);
+//		return new TreeRelKeywsHarvest(config, listener);
+//	}
 
 	/**
 	 * Creates subkeyworder.

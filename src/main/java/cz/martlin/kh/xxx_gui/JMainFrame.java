@@ -1,4 +1,4 @@
-package cz.martlin.kh.gui;
+package cz.martlin.kh.xxx_gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -84,8 +84,7 @@ public class JMainFrame extends JFrame {
 		initMainPane(content);
 		getContentPane().add(content, BorderLayout.CENTER);
 
-		JLabel footer = new JLabel("<html><i>" + KHMain.getAbout()
-				+ "</i></html>");
+		JLabel footer = new JLabel("<html><i>" + KHMain.getAbout() + "</i></html>");
 		getContentPane().add(footer, BorderLayout.SOUTH);
 	}
 
@@ -107,8 +106,7 @@ public class JMainFrame extends JFrame {
 		pane.add(loadPrevButt);
 
 		importExportedButt = new JButton("Import exported");
-		importExportedButt
-				.addActionListener(new ImportExportedButtActionListener());
+		importExportedButt.addActionListener(new ImportExportedButtActionListener());
 		pane.add(importExportedButt);
 
 		loadBackupButt = new JButton("Open backup of previous");
@@ -138,11 +136,9 @@ public class JMainFrame extends JFrame {
 		pane.add(viewDoneButt);
 
 		// output
-		outputFileLbl = new JLabel("Output file: --"
-				+ config.getExExportFile().getPath());
+		outputFileLbl = new JLabel("Output file: --" + config.getExExportFile().getPath());
 		outputFileLbl.setPreferredSize(LEFT_LABEL_PREF_SIZE);
-		outputFileLbl
-				.setToolTipText(config.getExExportFile().getAbsolutePath());
+		outputFileLbl.setToolTipText(config.getExExportFile().getAbsolutePath());
 		pane.add(outputFileLbl);
 
 		changeFileButt = new JButton("Change file");
@@ -233,8 +229,7 @@ public class JMainFrame extends JFrame {
 	 */
 	public void editKeywords() {
 		if (data == null) {
-			data = TreeHarvestProcessData.createNew(config,
-					Collections.<String> emptySet());
+			data = TreeHarvestProcessData.createNew(config, Collections.<String> emptySet());
 		}
 
 		editDial.setToData(data);
@@ -246,11 +241,9 @@ public class JMainFrame extends JFrame {
 	 * {@link Config#getQueuesDumpFile()}).
 	 */
 	public void loadPreviousHarvest() {
-		TreeHarvestProcessData newData = TreeHarvestProcessData
-				.loadFromDumpFile(config, false);
+		TreeHarvestProcessData newData = TreeHarvestProcessData.loadFromDumpFile(config, false);
 		if (newData == null) {
-			error("Could not load previous harvest. Check file "
-					+ config.getHwDataDumpFile().getPath());
+			error("Could not load previous harvest. Check file " + config.getHwDataDumpFile().getPath());
 			return;
 		}
 
@@ -268,10 +261,8 @@ public class JMainFrame extends JFrame {
 		if (result == JFileChooser.APPROVE_OPTION) {
 
 			File file = chooser.getSelectedFile();
-			TxtWithSeparatorFileFilter filter = (TxtWithSeparatorFileFilter) chooser
-					.getFileFilter();
-			TreeHarvestProcessData newData = TreeHarvestProcessData.importThem(
-					config, file, filter.getSeparator());
+			TxtWithSeparatorFileFilter filter = (TxtWithSeparatorFileFilter) chooser.getFileFilter();
+			TreeHarvestProcessData newData = TreeHarvestProcessData.importThem(config, file, filter.getSeparator());
 			if (newData != null) {
 				data = newData;
 			} else {
@@ -305,19 +296,16 @@ public class JMainFrame extends JFrame {
 	 * Informs user how to see done keywords.
 	 */
 	public void viewDone() {
-		info("To see result open file " + config.getExExportFile().getPath()
-				+ " (in excel?).");
+		info("To see result open file " + config.getExExportFile().getPath() + " (in excel?).");
 	}
 
 	/**
 	 * Imports files from exported.
 	 */
 	public void importExported() {
-		TreeHarvestProcessData newData = TreeHarvestProcessData
-				.loadExported(config);
+		TreeHarvestProcessData newData = TreeHarvestProcessData.loadExported(config);
 		if (newData == null) {
-			error("Could not load exported keywords. Try to check file "
-					+ config.getExExportFile().getPath());
+			error("Could not load exported keywords. Try to check file " + config.getExExportFile().getPath());
 			return;
 		}
 
@@ -329,8 +317,7 @@ public class JMainFrame extends JFrame {
 	 * Imports keywords from backup of keywords.
 	 */
 	public void loadBackupOfPrevious() {
-		TreeHarvestProcessData newData = TreeHarvestProcessData
-				.loadFromDumpFile(config, true);
+		TreeHarvestProcessData newData = TreeHarvestProcessData.loadFromDumpFile(config, true);
 		if (newData == null) {
 			error("Could not load backup of previous harvest. Check file "
 					+ config.getHwDataDumpBackupFile().getPath());
@@ -351,13 +338,12 @@ public class JMainFrame extends JFrame {
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
 
-		FileFilter filterLines = new TxtWithSeparatorFileFilter(
-				"Text file (*.txt), each keyword on particular line", "\n");
-		FileFilter filterComa = new TxtWithSeparatorFileFilter(
-				"Text file (*.txt), keywords separated by , (comma)", "\\, *");
+		FileFilter filterLines = new TxtWithSeparatorFileFilter("Text file (*.txt), each keyword on particular line",
+				"\n");
+		FileFilter filterComa = new TxtWithSeparatorFileFilter("Text file (*.txt), keywords separated by , (comma)",
+				"\\, *");
 		FileFilter filterSemicolon = new TxtWithSeparatorFileFilter(
-				"Text file (*.txt), keywords separated by ; (semicolon)",
-				"\\; *");
+				"Text file (*.txt), keywords separated by ; (semicolon)", "\\; *");
 		chooser.addChoosableFileFilter(filterLines);
 		chooser.addChoosableFileFilter(filterComa);
 		chooser.addChoosableFileFilter(filterSemicolon);
@@ -375,20 +361,17 @@ public class JMainFrame extends JFrame {
 	private JExportFileChooser createExportFileChooser(File selectedFile) {
 		Set<AbstractEI> exporters = StuffProvider.getExporters(config);
 
-		JExportFileChooser chooser = new JExportFileChooser(exporters,
-				selectedFile);
+		JExportFileChooser chooser = new JExportFileChooser(exporters, selectedFile);
 
 		return chooser;
 	}
 
 	private void error(String message) {
-		JOptionPane.showMessageDialog(this, message, "Error",
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void info(String message) {
-		JOptionPane.showMessageDialog(this, message, "Mesage",
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, message, "Mesage", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private class StopThread extends Thread {
@@ -423,11 +406,11 @@ public class JMainFrame extends JFrame {
 	}
 
 	private class StartThread extends Thread {
-		private final JMainFrame frame;
+		//private final JMainFrame frame;
 
 		public StartThread(JMainFrame frame) {
 			super("StartButtT");
-			this.frame = frame;
+			//this.frame = frame;
 			setUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
 		}
 
@@ -440,8 +423,8 @@ public class JMainFrame extends JFrame {
 
 			editDial.setVisible(false);
 
-			TreeRelKeywsHarvest harvester = StuffProvider.createHarvester(
-					config, frame);
+			TreeRelKeywsHarvest harvester = new TreeRelKeywsHarvest(config);
+			// StuffProvider.createHarvester(config, frame);
 			harvThread = new TreeHarvestThread(harvester, data);
 			harvThread.run();
 
