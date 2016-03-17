@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.function.Consumer;
 
 /**
  * Implements iterator of some {@link Collection}, but this one bothly
@@ -39,10 +38,10 @@ public class SerializableIterator<T> implements Serializable, Iterator<T> {
 	public void remove() {
 		next();
 	}
-
-	@Override
-	public void forEachRemaining(Consumer<? super T> action) {
-		items.forEach(action);
-	}
+//
+//	@Override
+//	public void forEachRemaining(Consumer<? super T> action) {
+//		items.forEach(action);
+//	}
 
 }

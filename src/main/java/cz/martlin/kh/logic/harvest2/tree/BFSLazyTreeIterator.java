@@ -61,4 +61,10 @@ public class BFSLazyTreeIterator implements Serializable, Iterator<String> {
 
 		return result;
 	}
+	
+	@Override
+	public void remove() {
+		// 
+		//Iterator.super.remove();
+	}
 }
