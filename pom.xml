@@ -16,6 +16,10 @@
 		</developer>
 	</developers>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<!-- LOGGING -->
 		<dependency>
@@ -90,11 +94,11 @@
 		</dependency>
 
 		<!-- jaxon -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>cz.martlin</groupId> -->
-<!-- 			<artifactId>jaxon</artifactId> -->
-<!-- 			<version>0.4-jv7</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>cz.martlin</groupId> -->
+		<!-- <artifactId>jaxon</artifactId> -->
+		<!-- <version>0.4-jv7</version> -->
+		<!-- </dependency> -->
 
 	</dependencies>
 
@@ -127,11 +131,11 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<mainClass>cz.martlin.kh.KHMain</mainClass> -->
-<!-- 						</manifest> -->
-<!-- 					</archive> -->
+					<!-- <archive> -->
+					<!-- <manifest> -->
+					<!-- <mainClass>cz.martlin.kh.KHMain</mainClass> -->
+					<!-- </manifest> -->
+					<!-- </archive> -->
 				</configuration>
 				<executions>
 					<execution>
