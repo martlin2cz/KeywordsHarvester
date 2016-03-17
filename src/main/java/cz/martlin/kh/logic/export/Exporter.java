@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
-import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
+import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
 
 /**
  * Does exporting stuff.

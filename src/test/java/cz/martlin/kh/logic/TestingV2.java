@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import cz.martlin.kh.logic.harvest2.RelatedKeywordsTree;
-import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
-import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
+import cz.martlin.kh.logic.harvest3.RelatedKeywordsTree;
+import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
+import cz.martlin.kh.logic.harvest3.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.picwf.PicwfQueryResult;
 import cz.martlin.kh.logic.picwf.Picworkflower;
 

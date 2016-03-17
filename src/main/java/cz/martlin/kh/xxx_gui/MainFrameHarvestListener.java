@@ -1,6 +1,6 @@
 package cz.martlin.kh.xxx_gui;
 
-import cz.martlin.kh.logic.harvest2.HarvestingListener;
+import cz.martlin.kh.logic.harvest3.HarvestingListener;
 
 /**
  * Implements {@link HarvestingListener} such that each message is shown in

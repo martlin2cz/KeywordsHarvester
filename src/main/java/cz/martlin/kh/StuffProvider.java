@@ -8,7 +8,7 @@ import cz.martlin.kh.logic.export.AbstractEI;
 import cz.martlin.kh.logic.export.CSVExporterImporter;
 import cz.martlin.kh.logic.export.Exporter;
 import cz.martlin.kh.logic.export.XLSXExporterImporter;
-import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
+import cz.martlin.kh.logic.harvest3.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.picwf.Picworkflower;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
 import cz.martlin.kh.logic.subkeyw.IStockphotoWrapper;

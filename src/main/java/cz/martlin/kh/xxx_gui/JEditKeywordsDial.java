@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
+import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
 
 /**
  * Frame for seeing, removing and adding keywords.

@@ -24,9 +24,9 @@ import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.KHMain.LoggingUncaughtExceptionHandler;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.export.AbstractEI;
-import cz.martlin.kh.logic.harvest2.TreeHarvestThread;
-import cz.martlin.kh.logic.harvest2.TreeHarvestProcessData;
-import cz.martlin.kh.logic.harvest2.TreeRelKeywsHarvest;
+import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
+import cz.martlin.kh.logic.harvest3.TreeHarvestThread;
+import cz.martlin.kh.logic.harvest3.TreeRelKeywsHarvest;
 
 /**
  * Main frame of application.

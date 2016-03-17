@@ -1,4 +1,4 @@
-package cz.martlin.kh.logic.harvest2;
+package cz.martlin.kh.logic.harvest3;
 
 /**
  * Interface for very simple reporting what happened in harvester (primarly

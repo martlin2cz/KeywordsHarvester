@@ -1,4 +1,4 @@
-package cz.martlin.kh.logic.harvest2;
+package cz.martlin.kh.logic.harvest3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

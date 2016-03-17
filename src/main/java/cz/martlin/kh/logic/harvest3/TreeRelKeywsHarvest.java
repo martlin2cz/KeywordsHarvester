@@ -1,6 +1,5 @@
-package cz.martlin.kh.logic.harvest2;
+package cz.martlin.kh.logic.harvest3;
 
-import java.io.IOException;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
-import cz.martlin.kh.logic.export.Exporter;
 import cz.martlin.kh.logic.picwf.PicwfQueryResult;
 import cz.martlin.kh.logic.picwf.Picworkflower;
 import cz.martlin.kh.logic.utils.Interruptable;
@@ -27,7 +25,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	private final HarvestingListener listener;
 
 	private final Picworkflower picworkflow;
-	private final Exporter exporter;
+	// private final Exporter exporter;
 
 	private boolean interrupted;
 	private TreeHarvestProcessData currentData;
@@ -45,7 +43,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 		this.config = config;
 		this.listener = listener;
 		this.picworkflow = StuffProvider.getPicworkflower(config);
-		this.exporter = StuffProvider.getExporter(config);
+		// this.exporter = StuffProvider.getExporter(config);
 	}
 
 	public TreeRelKeywsHarvest(Config config) {
@@ -56,7 +54,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	public void interrupt() {
 		this.interrupted = true;
 	}
-	
+
 	@Override
 	public boolean isInterrupted() {
 		return interrupted;
@@ -117,24 +115,25 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	 */
 	private boolean initialize(TreeHarvestProcessData data) {
 		tryToLog("Initializing");
-		try {
-			this.exporter.initializeExporter(data);
-		} catch (IOException e) {
-			log.error("Could not initialize exporter", e);
-			return false;
-		}
+		// try {
+		// this.exporter.initializeExporter(data);
+		// } catch (IOException e) {
+		// log.error("Could not initialize exporter", e);
+		// return false;
+		// }
 
-		log.info("Harvesting started, now done {} keywords and {} is waiting.",
-				data.getDoneCount(), data.getWaitingsCount());
+		log.info("Harvesting started, now done {} keywords and {} is waiting.", data.getDoneCount(),
+				data.getWaitingsCount());
 		tryToLog("Ready");
 
 		return true;
 
 	}
 
-/**
-	 * Creates next set of keywords to process. This is set 
-	 * to data by {@link TreeHarvestProcessData#setToProcess(Set)}.
+	/**
+	 * Creates next set of keywords to process. This is set to data by
+	 * {@link TreeHarvestProcessData#setToProcess(Set)}.
+	 * 
 	 * @param data
 	 */
 	private void createNextToProcess(TreeHarvestProcessData data) {
@@ -146,12 +145,10 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			Set<String> keywords = data.getNextToProcess(count, this);
 			data.setToProcess(keywords);
 
-			log.info("Prepared next set to process with size {}",
-					keywords.size());
+			log.info("Prepared next set to process with size {}", keywords.size());
 			tryToLog("Related keywords ready to process");
 		} catch (Exception e) {
-			log.error("Creating next keywords to process failed unexpectedly",
-					e);
+			log.error("Creating next keywords to process failed unexpectedly", e);
 
 		}
 	}
@@ -173,7 +170,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 			}
 
 			if (data.isSomeToExport() && !interrupted) {
-				export(data);
+				exportNotReally(data);
 			}
 
 			if (data.isSomeToDone() && !interrupted) {
@@ -199,8 +196,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 
 		log.info("Picworkflowing of {} keywords", keywords.size());
 		tryToLog("Invoking picworkflow with ", keywords.size() + " keywords...");
-		
-		
+
 		PicwfQueryResult result = picworkflow.run(keywords);
 		if (interrupted) {
 			return;
@@ -211,31 +207,26 @@ public class TreeRelKeywsHarvest implements Interruptable {
 		if (result != null) {
 			data.setToExport(result.getMetadatas());
 
-			log.info(
-					"Picworkflowing of {} keywords done with {} success ({} successful, {} failed, {} really)",
-					result.getRequestedCount(), result.getSuccessRatio(),
-					result.getDoneCount(), result.getNotdoneCount(), result
-							.getReallyNotdone().size());
-			tryToLog("Picworkflow completed with ", result.getDoneCount()
-					+ " keywords");
+			log.info("Picworkflowing of {} keywords done with {} success ({} successful, {} failed, {} really)",
+					result.getRequestedCount(), result.getSuccessRatio(), result.getDoneCount(),
+					result.getNotdoneCount(), result.getReallyNotdone().size());
+			tryToLog("Picworkflow completed with ", result.getDoneCount() + " keywords");
 		} else {
-			log.error(
-					"Picflowork of {} keywords failed completelly (with no result).",
-					keywords.size());
+			log.error("Picflowork of {} keywords failed completelly (with no result).", keywords.size());
 		}
 	}
 
 	/**
-	 * Does exporting of {@link TreeHarvestProcessData#getToExport()}. When
-	 * successfuly completed, unsets them from set and sets to done.
+	 * DOES NOTHING. Only moves keywords from toExport to toDone.
 	 * 
 	 * @param data
 	 */
-	private void export(TreeHarvestProcessData data) {
+	private void exportNotReally(TreeHarvestProcessData data) {
 		tryToLog("Exporting...");
 
 		Set<Keyword> toExport = data.getToExport();
-		Set<Keyword> exported = exporter.export(toExport, data);
+		Set<Keyword> exported = toExport; // simply copy
+		// exporter.export(toExport, data);
 
 		if (interrupted) {
 			return;
@@ -244,12 +235,12 @@ public class TreeRelKeywsHarvest implements Interruptable {
 		data.unsetToExport();
 		data.setToDone(exported);
 
-		if (exported != null) {
-			log.info("Exported {} keywords", exported.size());
-			tryToLog("Export done");
-		} else {
-			log.error("Exporting of keywords failed");
-		}
+		// if (exported != null) {
+		// log.info("Exported {} keywords", exported.size());
+		// tryToLog("Export done");
+		// } else {
+		// log.error("Exporting of keywords failed");
+		// }
 	}
 
 	/**
@@ -270,9 +261,8 @@ public class TreeRelKeywsHarvest implements Interruptable {
 
 		System.gc();
 
-		log.info(
-				"Completed one iteration with {} keywords. Now completelly done {}.",
-				done.size(), data.getDoneCount());
+		log.info("Completed one iteration with {} keywords. Now completelly done {}.", done.size(),
+				data.getDoneCount());
 		tryToLog("Next ", data.getDoneCount(), " keywords successfully done");
 	}
 
@@ -282,8 +272,7 @@ public class TreeRelKeywsHarvest implements Interruptable {
 	 * @param data
 	 */
 	private void finish(TreeHarvestProcessData data) {
-		log.info("Harvesting finished, completelly done {} keywords.",
-				data.getDoneCount());
+		log.info("Harvesting finished, completelly done {} keywords.", data.getDoneCount());
 		tryToLog("Finished");
 
 	}
