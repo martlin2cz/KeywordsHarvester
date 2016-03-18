@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.martlin</groupId>
 	<artifactId>KeywordsHarvester</artifactId>
-	<version>1.11-twl</version>
+	<version>1.12-twl</version>
 	<name>Images' keywords harvester for Pavel D Prichystal</name>
 	<description>Application querries picworkflow.com with user entered keyword and selects reladed keyfords by shutterstock.com and istockphoto.com and recursivelly looks for them. </description>
 

@@ -23,12 +23,15 @@ import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
 
 /**
- * Exports into XLSX file. Each export export file overrides.
+ * Exports into XLSX file. Each export export file overrides. Replaced with {@link XLSXInMemExporterImporter}.
+ * @see XLSXInMemExporterImporter
  * 
+ * @deprecated too uneffective
  * @author martin
  * 
  */
-public class XLSXExporterImporter extends RewriteExporterImporter {
+@Deprecated
+public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 	public static final String SUFFIX = "xlsx";
 	private static final String DESCRIPTION = "Microsoft excel format (2007-?) (*.XLSX)";
 
@@ -40,7 +43,7 @@ public class XLSXExporterImporter extends RewriteExporterImporter {
 	private InputStream ins;
 	private Iterator<Row> rows;
 
-	public XLSXExporterImporter(Config config) {
+	public XLSXNativeExporterImporter(Config config) {
 		super(config);
 	}
 

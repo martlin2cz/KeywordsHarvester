@@ -7,7 +7,7 @@ import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.export.AbstractEI;
 import cz.martlin.kh.logic.export.CSVExporterImporter;
 import cz.martlin.kh.logic.export.Exporter;
-import cz.martlin.kh.logic.export.XLSXExporterImporter;
+import cz.martlin.kh.logic.export.XLSXAppendingExporterImporter;
 import cz.martlin.kh.logic.harvest3.TreeRelKeywsHarvest;
 import cz.martlin.kh.logic.picwf.Picworkflower;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -51,12 +51,12 @@ public class StuffProvider {
 	 * @param frame
 	 * @return
 	 */
-//	@Deprecated
-//	public static TreeRelKeywsHarvest createHarvester(Config config,
-//			JMainFrame frame) {
-//		MainFrameHarvestListener listener = new MainFrameHarvestListener(frame);
-//		return new TreeRelKeywsHarvest(config, listener);
-//	}
+	// @Deprecated
+	// public static TreeRelKeywsHarvest createHarvester(Config config,
+	// JMainFrame frame) {
+	// MainFrameHarvestListener listener = new MainFrameHarvestListener(frame);
+	// return new TreeRelKeywsHarvest(config, listener);
+	// }
 
 	/**
 	 * Creates subkeyworder.
@@ -120,8 +120,7 @@ public class StuffProvider {
 	 * @param config
 	 * @param services
 	 */
-	private static void initializeServices(Config config,
-			Set<AbstractServiceWrapper> services) {
+	private static void initializeServices(Config config, Set<AbstractServiceWrapper> services) {
 
 		services.add(new IStockphotoWrapper(config));
 		services.add(new ShutterstockWrapper(config));
@@ -133,10 +132,9 @@ public class StuffProvider {
 	 * @param config
 	 * @param exporters
 	 */
-	private static void initializeExporters(Config config,
-			Set<AbstractEI> exporters) {
+	private static void initializeExporters(Config config, Set<AbstractEI> exporters) {
 
-		exporters.add(new XLSXExporterImporter(config));
+		exporters.add(new XLSXAppendingExporterImporter(config));
 		exporters.add(new CSVExporterImporter(config));
 	}
 }

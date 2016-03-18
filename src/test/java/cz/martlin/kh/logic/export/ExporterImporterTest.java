@@ -18,8 +18,7 @@ public class ExporterImporterTest {
 		Config config = new Config();
 
 		String tmpdir = System.getProperty("java.io.tmpdir");
-		String filename = "testing-export" + System.currentTimeMillis() + "."
-				+ sfx;
+		String filename = "testing-export" + System.currentTimeMillis() + "." + sfx;
 		File file = new File(tmpdir, filename);
 
 		config.setExExportFile(file);
@@ -66,8 +65,8 @@ public class ExporterImporterTest {
 
 	@Test
 	public void testXLSX() throws IOException {
-		Config config = initConfig(XLSXExporterImporter.SUFFIX);
-		XLSXExporterImporter exporter = new XLSXExporterImporter(config);
+		Config config = initConfig(XLSXAppendingExporterImporter.SUFFIX);
+		XLSXAppendingExporterImporter exporter = new XLSXAppendingExporterImporter(config);
 
 		// write
 		exporter.initializeExporterToWrite();
