@@ -23,7 +23,7 @@ import cz.martlin.kh.KHMain;
 import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.KHMain.LoggingUncaughtExceptionHandler;
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.AbstractExporterImporter;
 import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
 import cz.martlin.kh.logic.harvest3.TreeHarvestThread;
 import cz.martlin.kh.logic.harvest3.TreeRelKeywsHarvest;
@@ -359,7 +359,7 @@ public class JMainFrame extends JFrame {
 	 * @return
 	 */
 	private JExportFileChooser createExportFileChooser(File selectedFile) {
-		Set<AbstractEI> exporters = StuffProvider.getExporters(config);
+		Set<AbstractExporterImporter> exporters = StuffProvider.getExporters(config);
 
 		JExportFileChooser chooser = new JExportFileChooser(exporters, selectedFile);
 

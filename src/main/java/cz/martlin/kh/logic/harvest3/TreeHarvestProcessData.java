@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import cz.martlin.kh.StuffProvider;
 import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
-import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.AbstractExporterImporter;
 import cz.martlin.kh.logic.harvest2.tree.BFSLazyTree;
 import cz.martlin.kh.logic.harvest2.tree.BFSLazyTreeIterator;
 import cz.martlin.kh.logic.utils.Interruptable;
@@ -488,9 +488,9 @@ public class TreeHarvestProcessData implements Serializable {
 	 * @return
 	 */
 	public static TreeHarvestProcessData loadExported(Config config) {
-		Set<AbstractEI> exporters = StuffProvider.getExporters(config);
+		Set<AbstractExporterImporter> exporters = StuffProvider.getExporters(config);
 		File file = config.getExExportFile();
-		AbstractEI importer = AbstractEI.getBySuffix(exporters, file);
+		AbstractExporterImporter importer = AbstractExporterImporter.getBySuffix(exporters, file);
 
 		Set<Keyword> keywords;
 

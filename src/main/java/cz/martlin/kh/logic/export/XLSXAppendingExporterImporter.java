@@ -1,5 +1,6 @@
 package cz.martlin.kh.logic.export;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,19 +24,20 @@ import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
 
 /**
- * Exports into XLSX file. Each export export file overrides. Replaced with {@link XLSXInMemExporterImporter}.
+ * Exports into XLSX file. Each export export file overrides. Replaced with
+ * {@link XLSXInMemExporterImporter}.
+ * 
  * @see XLSXInMemExporterImporter
  * 
- * @deprecated too uneffective
  * @author martin
  * 
  */
-@Deprecated
-public class XLSXNativeExporterImporter extends RewriteExporterImporter {
+public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
+
 	public static final String SUFFIX = "xlsx";
 	private static final String DESCRIPTION = "Microsoft excel format (2007-?) (*.XLSX)";
+	private static final String SHEET_NAME = "keywords";
 
-	private OutputStream ous;
 	private XSSFWorkbook writeworkbook;
 	private XSSFSheet writesheet;
 	private int nextRowIndex;
@@ -43,7 +45,7 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 	private InputStream ins;
 	private Iterator<Row> rows;
 
-	public XLSXNativeExporterImporter(Config config) {
+	public XLSXAppendingExporterImporter(Config config) {
 		super(config);
 	}
 
@@ -77,28 +79,25 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 	}
 
 	@Override
-	public void openFileToWrite() throws IOException {
-		ous = new FileOutputStream(config.getExExportFile());
-		writeworkbook = new XSSFWorkbook();
-		writesheet = writeworkbook.createSheet("Keywords");
+	public boolean openFileToWrite() throws IOException {
+		try {
+			tryToLoadYetExistingDocument();
+			return writesheet.getPhysicalNumberOfRows() > 0;
+		} catch (Exception e) {
+			throw new IOException("Cannot open file to write", e);
+		}
 
-		nextRowIndex = 0;
 	}
 
 	@Override
 	public void closeFileToWrite() throws IOException {
-		writeworkbook.write(ous);
-
-		IOUtils.closeQuietly(ous);
-
-		ous = null;
-		writeworkbook = null;
-		writesheet = null;
-		nextRowIndex = -1;
+		// nothing
 	}
 
 	@Override
 	public void exportHeaderOrShit() throws IOException {
+		tryToLoadYetExistingDocument();
+
 		Row row = writesheet.createRow(0);
 
 		CellStyle style = createHeaderCellsStyle();
@@ -109,7 +108,7 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 			cell.setCellStyle(style);
 		}
 
-		nextRowIndex = 1;
+		saveCurrentDocument();
 	}
 
 	@Override
@@ -126,16 +125,60 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 		appendCell(7, row, keyword.getRating());
 
 		nextRowIndex++;
+		log.debug("Keyword {} exported to " + getSuffix(), keyword);
+	}
 
+	@Override
+	protected void beforeExport() throws IOException {
+		tryToLoadYetExistingDocument();
+	}
+
+	@Override
+	protected void afterExport() throws IOException {
+		saveCurrentDocument();
+	}
+
+	private void tryToLoadYetExistingDocument() throws IOException {
+		try {
+			ins = new FileInputStream(config.getExExportFile());
+			writeworkbook = new XSSFWorkbook(ins);
+			IOUtils.closeQuietly(ins);
+
+			writesheet = writeworkbook.getSheetAt(0);
+		} catch (Exception e) {
+			writeworkbook = new XSSFWorkbook();
+			writesheet = writeworkbook.createSheet(SHEET_NAME);
+		}
+
+		nextRowIndex = writesheet.getPhysicalNumberOfRows() + 1;
+	}
+
+	private void saveCurrentDocument() throws IOException {
+		File file = config.getExExportFile();
+
+		OutputStream ous = null;
+		try {
+			ous = new FileOutputStream(file);
+			writeworkbook.write(ous);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			IOUtils.closeQuietly(ous);
+		}
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public void openFileToRead() throws IOException {
-		ins = new FileInputStream(config.getExExportFile());
-		XSSFWorkbook readworkbook = new XSSFWorkbook(ins);
-		XSSFSheet readsheet = readworkbook.getSheetAt(0);
-		rows = readsheet.rowIterator();
+		try {
+			ins = new FileInputStream(config.getExExportFile());
+			XSSFWorkbook readworkbook = new XSSFWorkbook(ins);
+			XSSFSheet readsheet = readworkbook.getSheetAt(0);
+			rows = readsheet.rowIterator();
+		} catch (Exception e) {
+			throw new IOException("Cannot open file to read", e);
+		}
 	}
 
 	@Override
@@ -164,8 +207,7 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 		if (succ) {
 			log.debug("Export file format ok.");
 		} else {
-			log.error("Export file format mismatch: Expected headers "
-					+ headers + ", but found " + infile);
+			log.error("Export file format mismatch: Expected headers " + headers + ", but found " + infile);
 		}
 
 		return succ;
@@ -178,6 +220,7 @@ public class XLSXNativeExporterImporter extends RewriteExporterImporter {
 		}
 
 		Row row = rows.next();
+		log.debug("Importing record from row " + row.getRowNum());
 
 		String keyword = getCellValue(0, row, String.class);
 		int count = getCellValue(1, row, int.class);

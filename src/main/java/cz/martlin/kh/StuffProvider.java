@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import cz.martlin.kh.logic.Config;
-import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.AbstractExporterImporter;
 import cz.martlin.kh.logic.export.CSVExporterImporter;
 import cz.martlin.kh.logic.export.Exporter;
 import cz.martlin.kh.logic.export.XLSXAppendingExporterImporter;
@@ -106,9 +106,9 @@ public class StuffProvider {
 	 * 
 	 * @return
 	 */
-	public static Set<AbstractEI> getExporters(Config config) {
+	public static Set<AbstractExporterImporter> getExporters(Config config) {
 
-		Set<AbstractEI> result = new LinkedHashSet<>();
+		Set<AbstractExporterImporter> result = new LinkedHashSet<>();
 		initializeExporters(config, result);
 
 		return result;
@@ -132,7 +132,7 @@ public class StuffProvider {
 	 * @param config
 	 * @param exporters
 	 */
-	private static void initializeExporters(Config config, Set<AbstractEI> exporters) {
+	private static void initializeExporters(Config config, Set<AbstractExporterImporter> exporters) {
 
 		exporters.add(new XLSXAppendingExporterImporter(config));
 		exporters.add(new CSVExporterImporter(config));

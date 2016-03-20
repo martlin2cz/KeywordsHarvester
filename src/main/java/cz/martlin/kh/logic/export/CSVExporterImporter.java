@@ -1,11 +1,15 @@
 package cz.martlin.kh.logic.export;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -23,10 +27,11 @@ import cz.martlin.kh.logic.Keyword;
  * @author martin
  * 
  */
-public class CSVExporterImporter extends AppendExporterImporter {
+public class CSVExporterImporter extends AbstractExporterImporter {
 	public static final String SUFFIX = "csv";
 	private static final String DESCRIPTION = "Coma separated values (*.CSV)";
-	private static CSVFormat format = CSVFormat.EXCEL.withDelimiter(';');
+
+	private static CSVFormat format = CSVFormat.EXCEL.withDelimiter(';').withHeader(HEADER_FIELDS);
 
 	private Writer writer;
 	private CSVPrinter printer;
@@ -50,25 +55,28 @@ public class CSVExporterImporter extends AppendExporterImporter {
 	}
 
 	@Override
-	public void openFileToWrite() throws IOException {
-		writer = new FileWriter(config.getExExportFile(), true); // TODO FIXME
-																	// true? or
-																	// false?
+	public boolean openFileToWrite() throws IOException {
+		File file = config.getExExportFile();
+		long size = file.length();
+
+		writer = new FileWriter(file, true);
 		printer = new CSVPrinter(writer, format);
+
+		return size > 0;
 	}
 
 	@Override
 	public void closeFileToWrite() throws IOException {
 		IOUtils.closeQuietly(writer);
 		IOUtils.closeQuietly(printer);
-		
+
 		writer = null;
 		printer = null;
 	}
 
 	@Override
 	public void exportHeaderOrShit() throws IOException {
-		printer.printRecord((Object[]) HEADER_FIELDS);
+		// printer.print(HEADER_FIELDS);
 	}
 
 	@Override
@@ -79,7 +87,12 @@ public class CSVExporterImporter extends AppendExporterImporter {
 	}
 
 	@Override
-	protected void flush() throws IOException {
+	protected void beforeExport() throws IOException {
+		// nothing
+	}
+
+	@Override
+	protected void afterExport() throws IOException {
 		printer.flush();
 		writer.flush();
 		log.debug("Keywords flushed.");
@@ -87,19 +100,11 @@ public class CSVExporterImporter extends AppendExporterImporter {
 
 	// ////////////////////////////////////////////////////////////////////////////
 
-	public void initializeExporterToRead() throws IOException {
-		openFileToRead();
-	}
-
-	@Override
-	public void finishExporterToRead() throws IOException {
-		closeFileToRead();
-	}
-
 	@Override
 	public void openFileToRead() throws IOException {
 		reader = new FileReader(config.getExExportFile());
 		parser = new CSVParser(reader, format);
+
 		records = parser.iterator();
 	}
 
@@ -107,6 +112,7 @@ public class CSVExporterImporter extends AppendExporterImporter {
 	public void closeFileToRead() throws IOException {
 		IOUtils.closeQuietly(reader);
 		IOUtils.closeQuietly(parser);
+
 		reader = null;
 		parser = null;
 		records = null;
@@ -114,21 +120,20 @@ public class CSVExporterImporter extends AppendExporterImporter {
 
 	@Override
 	protected boolean checkFile() {
-		// List<String> expected = Arrays.asList(HEADER_FIELDS);
-		// List<String> infile = new
-		// ArrayList<>(records.next().toMap().keySet());
-		//
-		// boolean succ = expected.equals(infile);
-		//
-		// if (succ) {
-		// log.debug("Export file format ok.");
-		// } else {
-		// log.error("Export file format mismatch: Expected headers "
-		// + expected + ", but found " + infile);
-		// }
 
-		boolean succ = true;
-		log.warn("File check out of order. Assuming file is OK.");
+		Set<String> expected = new HashSet<>(Arrays.asList(HEADER_FIELDS));
+
+		CSVRecord line = records.next();
+		Set<String> infile = new HashSet<String>(line.toMap().keySet());
+
+		boolean succ = expected.equals(infile);
+
+		if (succ) {
+			log.debug("Export file format ok.");
+		} else {
+			log.error("Export file format mismatch: Expected headers " + expected + ", but found " + infile);
+		}
+
 		return succ;
 
 	}
@@ -139,13 +144,14 @@ public class CSVExporterImporter extends AppendExporterImporter {
 			return null;
 		}
 		CSVRecord record = records.next();
+		log.debug("Importing record from CSV record: " + record.toMap());
 
 		String keyword = record.get(0);
 		int count = Integer.parseInt(record.get(1));
 		int downloads = Integer.parseInt(record.get(2));
-		// downlaods per file
+		// downloads per file
 		int views = Integer.parseInt(record.get(4));
-		// wievs per file
+		// views per file
 		int lang = Integer.parseInt(record.get(6));
 		double rating = Double.parseDouble(record.get(7));
 
@@ -160,11 +166,11 @@ public class CSVExporterImporter extends AppendExporterImporter {
 	 */
 	private static Object[] keywordToLine(Keyword keyword) {
 		return new Object[] { keyword.getKeyword(), //
-				keyword.getCount(),//
+				keyword.getCount(), //
 				keyword.getDownloads(), //
-				keyword.getDownloadsPerFile(),//
+				keyword.getDownloadsPerFile(), //
 				keyword.getViews(), //
-				keyword.getViewsPerFile(),//
+				keyword.getViewsPerFile(), //
 				keyword.getLang(), //
 				keyword.getRating() //
 		};

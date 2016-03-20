@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import cz.martlin.kh.logic.exception.NetworkException;
-import cz.martlin.kh.logic.export.AbstractEI;
+import cz.martlin.kh.logic.export.AbstractExporterImporter;
 import cz.martlin.kh.logic.export.CSVExporterImporter;
-import cz.martlin.kh.logic.export.XLSXNativeExporterImporter;
 import cz.martlin.kh.logic.picwf.PicworkflowQuery;
 import cz.martlin.kh.logic.picwf.PicworkflowWrapper;
 import cz.martlin.kh.logic.subkeyw.AbstractServiceWrapper;
@@ -27,8 +26,8 @@ public class Testing {
 	protected static final CSVExporterImporter csv = //
 	new CSVExporterImporter(config);
 
-	protected static final XLSXNativeExporterImporter xlsx = //
-	new XLSXNativeExporterImporter(config);
+//	protected static final XLSXNativeExporterImporter xlsx = //
+//	new XLSXNativeExporterImporter(config);
 
 	public static void main(String[] args) {
 		System.out.println("Uncomment something to run test:");
@@ -58,7 +57,7 @@ public class Testing {
 
 	}
 
-	protected static void testExporter(Config config, AbstractEI export) {
+	protected static void testExporter(Config config, AbstractExporterImporter export) {
 		try {
 			System.out.println("init:" + export + ", into: "
 					+ config.getExExportFile().getPath());

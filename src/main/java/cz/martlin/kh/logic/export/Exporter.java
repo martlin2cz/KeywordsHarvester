@@ -1,7 +1,6 @@
 package cz.martlin.kh.logic.export;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -20,9 +19,9 @@ import cz.martlin.kh.logic.harvest3.TreeHarvestProcessData;
 public class Exporter {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private final AbstractEI exporter;
+	private final AbstractExporterImporter exporter;
 
-	public Exporter(Config config, Set<AbstractEI> exporters) {
+	public Exporter(Config config, Set<AbstractExporterImporter> exporters) {
 		super();
 		this.exporter = chooseExporter(config, exporters);
 	}
@@ -36,127 +35,48 @@ public class Exporter {
 	 * @param exporters
 	 * @return
 	 */
-	private AbstractEI chooseExporter(Config config,
-			Set<AbstractEI> exporters) {
+	private AbstractExporterImporter chooseExporter(Config config, Set<AbstractExporterImporter> exporters) {
 
-		AbstractEI export = AbstractEI.getBySuffix(exporters,
-				config.getExExportFile());
+		AbstractExporterImporter export = AbstractExporterImporter.getBySuffix(exporters, config.getExExportFile());
 
 		if (export == null) {
-			log.error("Unkown exporter for exporter file {}",
-					config.getExExportFile());
+			log.error("Unkown exporter for exporter file {}", config.getExExportFile());
 		} else {
-			log.info("Exporter {} ready to exporter into file {}", export,
-					config.getExExportFile());
+			log.info("Exporter {} ready to exporter into file {}", export, config.getExExportFile());
 		}
 
 		return export;
 	}
 
 	/**
-	 * Initializes currently choosen exporter (by constructor) with given data.
+	 * Initializes currently choosen exporter.
 	 * 
 	 * @param data
 	 * @throws IOException
 	 */
-	public void initializeExporter(TreeHarvestProcessData data)
-			throws IOException {
+	public void initializeExporter() throws IOException {
 		exporter.initializeExporterToWrite();
-
-		if (exporter instanceof AppendExporterImporter) {
-			AppendExporterImporter ae = (AppendExporterImporter) exporter;
-			ae.exportInitial(data.getDone());
-		}
 	}
 
 	/**
 	 * Exports data with initialized exporter (using
-	 * {@link #initializeExporter(TreeHarvestProcessData)}).
+	 * {@link #initializeExporter()}).
 	 * 
 	 * @param data
 	 * @param keywords
 	 * @return
 	 */
-	public Set<Keyword> export(Set<Keyword> keywords,
-			TreeHarvestProcessData data) {
+	public Set<Keyword> export(Set<Keyword> keywords, TreeHarvestProcessData data) {
 
 		try {
-			if (exporter instanceof AppendExporterImporter) {
-				return exportBatch((AppendExporterImporter) exporter, keywords, data);
-			} else {
-				return exportAll((RewriteExporterImporter) exporter, keywords, data);
-			}
+			exporter.export(keywords);
+
+			return keywords;
 		} catch (IOException e) {
 			log.error("An error occured during exporting", e);
 			return null;
 		}
+
 	}
 
-	/**
-	 * Exports batch of keywords.
-	 * 
-	 * @param data
-	 * @param exporter
-	 * @return
-	 * 
-	 * @throws IOException
-	 */
-	private Set<Keyword> exportBatch(AppendExporterImporter appendExporter,
-			Set<Keyword> batch, TreeHarvestProcessData data) throws IOException {
-
-		log.info("Exporting batch of {} keywords: {}", batch.size(), batch);
-
-		appendExporter.export(batch);
-
-		log.info(
-				"Exporting of {} keywords done, now is completelly done {} keywords",
-				batch.size(), data.getDoneCount());
-
-		return batch;
-	}
-
-	/**
-	 * (Re)exports all keywords.
-	 * 
-	 * @param exporter
-	 * @param data
-	 * @return
-	 * 
-	 * @throws IOException
-	 */
-	private Set<Keyword> exportAll(RewriteExporterImporter rewriteExport,
-			Set<Keyword> newToExport, TreeHarvestProcessData data)
-			throws IOException {
-
-		Set<Keyword> yetExported = data.getDone();
-		Set<Keyword> toExport = datasetToExport(yetExported, newToExport);
-		log.info("Exporting all {} keywords.", toExport.size());
-
-		rewriteExport.export(toExport);
-		data.setToDone(newToExport);
-
-		log.info(
-				"Exporting of all {} keywords done, now is completelly done {} keywords",
-				toExport.size(), data.getDoneCount());
-
-		return newToExport;
-	}
-
-	/**
-	 * Creates set of all keywords to export.
-	 * 
-	 * @param yetExported
-	 * @param newToExport
-	 * @return
-	 */
-	private Set<Keyword> datasetToExport(Set<Keyword> yetExported,
-			Set<Keyword> newToExport) {
-		int allSize = yetExported.size() + newToExport.size();
-		Set<Keyword> all = new LinkedHashSet<>(allSize);
-
-		all.addAll(yetExported);
-		all.addAll(newToExport);
-
-		return all;
-	}
 }

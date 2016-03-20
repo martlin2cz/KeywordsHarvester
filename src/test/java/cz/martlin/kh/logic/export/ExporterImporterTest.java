@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class ExporterImporterTest {
 		return config;
 	}
 
-	private Set<Keyword> createKeywords() {
+	private Set<Keyword> createKeywords1() {
 		Set<Keyword> kws = new LinkedHashSet<>();
 
 		kws.add(new Keyword("Computer", 2, 1000, 999, 1024, 0.5));
@@ -37,21 +38,48 @@ public class ExporterImporterTest {
 		return kws;
 	}
 
-	@Test
-	public void testCSV() throws IOException {
-		Config config = initConfig(CSVExporterImporter.SUFFIX);
-		CSVExporterImporter exporter = new CSVExporterImporter(config);
+	private Set<Keyword> createKeywords2() {
+		Set<Keyword> kws = new LinkedHashSet<>();
 
+		kws.add(new Keyword("Music", 4, 15233, 1856, 8885, 0.3));
+		kws.add(new Keyword("Olomouc", 4, 11, 255, 456, 0.4));
+		kws.add(new Keyword("Drink", 3, 59, 222, 333, 0.1));
+
+		return kws;
+	}
+
+	@Test
+	public void testExporters() throws IOException {
+
+		Config config1 = initConfig(CSVExporterImporter.SUFFIX);
+		testExporter(new CSVExporterImporter(config1));
+
+		Config config2 = initConfig(XLSXAppendingExporterImporter.SUFFIX);
+		testExporter(new XLSXAppendingExporterImporter(config2));
+
+	}
+
+	public void testExporter(AbstractExporterImporter exporter) throws IOException {
+
+		/////////////////////////////////
 		// write
 		exporter.initializeExporterToWrite();
-		exporter.exportInitial(new LinkedHashSet<Keyword>());
 
-		// exporter.exportInitial(createKeywords());
-		Set<Keyword> input = createKeywords();
-		exporter.export(input);
+		// export first
+		Set<Keyword> keywords1 = createKeywords1();
+		exporter.export(keywords1);
+
+		// export second
+		Set<Keyword> keywords2 = createKeywords2();
+		exporter.export(keywords2);
+
+		// export empty (just for case
+		Set<Keyword> keywords3 = new LinkedHashSet<>();
+		exporter.export(keywords3);
 
 		exporter.finishExporterToWrite();
 
+		/////////////////////////////////
 		// read
 		exporter.initializeExporterToRead();
 
@@ -59,33 +87,16 @@ public class ExporterImporterTest {
 
 		exporter.finishExporterToRead();
 
+		/////////////////////////////////
 		// check
+
+		// create expected
+		Set<Keyword> input = new HashSet<>();
+		input.addAll(keywords1);
+		input.addAll(keywords2);
+		input.addAll(keywords3);
+
+		// compare
 		assertEquals(input, output);
 	}
-
-	@Test
-	public void testXLSX() throws IOException {
-		Config config = initConfig(XLSXAppendingExporterImporter.SUFFIX);
-		XLSXAppendingExporterImporter exporter = new XLSXAppendingExporterImporter(config);
-
-		// write
-		exporter.initializeExporterToWrite();
-
-		// exporter.exportInitial(createKeywords());
-		Set<Keyword> input = createKeywords();
-		exporter.export(input);
-
-		exporter.finishExporterToWrite();
-
-		// read
-		exporter.initializeExporterToRead();
-
-		Set<Keyword> output = exporter.importKeywords();
-
-		exporter.finishExporterToRead();
-
-		// check
-		assertEquals(input, output);
-	}
-
 }

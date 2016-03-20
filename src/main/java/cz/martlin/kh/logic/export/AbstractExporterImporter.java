@@ -15,32 +15,26 @@ import cz.martlin.kh.logic.Config;
 import cz.martlin.kh.logic.Keyword;
 
 /**
- * Represents abstract exporter and importer of keywords set. Expected
- * implementation should export into some "table" file with header line (can be
- * used {@link #HEADER_FIELDS}). Before and after use must be initialized by
- * methods {@link #initializeExporterToWrite()} and
- * {@link #finishExporterToWrite()}. For concrete subclasses are provided
- * methods {@link #openFileToWrite()} and {@link #closeFileToWrite()} to open
- * and close file (they're not used in this class).
+ * Represents abstract exporter and importer of keywords set.
  * 
+ * TODO doc
  * 
  * @author martin
  * 
  */
-public abstract class AbstractEI {
+public abstract class AbstractExporterImporter {
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Array of keywords' header fields.
 	 */
-	protected final String[] HEADER_FIELDS = new String[] { "keyword", "count",
-			"downloads", "downloads per file", "views", "views per file",
-			"language", "rating" };
+	protected final static String[] HEADER_FIELDS = new String[] { //
+			"keyword", "count", "downloads", "downloads per file", "views", "views per file", "language", "rating" };
 
 	protected final Config config;
 
-	public AbstractEI(Config config) {
+	public AbstractExporterImporter(Config config) {
 		super();
 		this.config = config;
 	}
@@ -60,25 +54,43 @@ public abstract class AbstractEI {
 	public abstract String getFormatDescription();
 
 	/**
-	 * Initializes exporter.
+	 * Initializes exporter (opens file). If file not yet existed, exports
+	 * headers (by calling {@link #exportHeaderOrShit()}).
 	 * 
+	 * @return true if file yet existed and was not empty
 	 * @throws IOException
+	 * 
 	 */
-	public abstract void initializeExporterToWrite() throws IOException;
+	public boolean initializeExporterToWrite() throws IOException {
+		boolean existed = openFileToWrite();
+
+		if (!existed) {
+			exportHeaderOrShit();
+		}
+
+		return existed;
+	}
 
 	/**
-	 * Closes exporter.
+	 * Closes exporter (closes file).
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void finishExporterToWrite() throws IOException;
+	public void finishExporterToWrite() throws IOException {
+		closeFileToWrite();
+	}
 
 	/**
-	 * Opens file to write.
+	 * Opens file to write. Should (just for case) create the file, but not
+	 * really.
+	 * 
+	 * @return true if file exists (or existed if it have been created during
+	 *         this method) and contains yet some keywords (ok, just whether
+	 *         contains something)
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void openFileToWrite() throws IOException;
+	public abstract boolean openFileToWrite() throws IOException;
 
 	/**
 	 * Closes file.
@@ -95,12 +107,16 @@ public abstract class AbstractEI {
 	public abstract void exportHeaderOrShit() throws IOException;
 
 	/**
-	 * Particullary (by concrete type of exporter) exports given keywords set.
+	 * Exports given keywords and flushes changes.
 	 * 
 	 * @param keywords
 	 * @throws IOException
 	 */
-	public abstract void export(Set<Keyword> keywords) throws IOException;
+	public void export(Set<Keyword> keywords) throws IOException {
+		beforeExport();
+		exportKeywords(keywords);
+		afterExport();
+	}
 
 	/**
 	 * Only exports given set of keywords using {@link #exportKeyword(Keyword)}.
@@ -115,28 +131,43 @@ public abstract class AbstractEI {
 	}
 
 	/**
-	 * Only exports given keyword.
+	 * Exports given keyword. Nothing more.
 	 * 
 	 * @param keyword
 	 * @throws IOException
 	 */
 	protected abstract void exportKeyword(Keyword keyword) throws IOException;
 
+	/**
+	 * Does something before the set of keywords is exported (i.e. loads
+	 * somethig from exported file)
+	 */
+	protected abstract void beforeExport() throws IOException;
+
+	/**
+	 * Does something after the set of keywords is exported (probably save
+	 * changes to disk).
+	 */
+	protected abstract void afterExport() throws IOException;
 	// ////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Initializes exporter.
+	 * Initializes exporter to read.
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void initializeExporterToRead() throws IOException;
+	public void initializeExporterToRead() throws IOException {
+		openFileToRead();
+	}
 
 	/**
 	 * Closes exporter.
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void finishExporterToRead() throws IOException;
+	public void finishExporterToRead() throws IOException {
+		closeFileToRead();
+	}
 
 	/**
 	 * Opens file to read.
@@ -165,13 +196,15 @@ public abstract class AbstractEI {
 	 * 
 	 * @return
 	 * @throws IOException
+	 *             on error (or if file is in bad format)
 	 */
 	public Set<Keyword> importKeywords() throws IOException {
 		openFileToRead();
 		boolean succ = checkFile();
 
 		if (!succ) {
-			return null;
+			IllegalArgumentException e = new IllegalArgumentException("File is in bad format");
+			throw new IOException("Bad file", e);
 		}
 
 		Set<Keyword> result = new LinkedHashSet<>();
@@ -190,7 +223,8 @@ public abstract class AbstractEI {
 
 	/**
 	 * Loads, parses and imports next keyword. If there is no such keyword in
-	 * file, returns null. On error (bad format), throws exception.
+	 * file, returns null. On error (i.e. not a number in numeric field), throws
+	 * exception.
 	 * 
 	 * @return
 	 * @throws IOException
@@ -211,8 +245,7 @@ public abstract class AbstractEI {
 			return null;
 		}
 
-		String backupPath = file.getAbsolutePath() + "_"
-				+ new Date().toString() + "." + getSuffix();
+		String backupPath = file.getAbsolutePath() + "_" + new Date().toString() + "." + getSuffix();
 
 		File backup = new File(backupPath);
 
@@ -223,30 +256,9 @@ public abstract class AbstractEI {
 			return false;
 		}
 
-		log.info("File {} have been backed up into file {}", file.getPath(),
-				backup.getPath());
+		log.info("File {} have been backed up into file {}", file.getPath(), backup.getPath());
 
 		return true;
-	}
-
-	/**
-	 * If file ({@link Config#getExportFile()}) not existed writes some header (
-	 * {@link #exportHeaderOrShit()}) in the file.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public boolean tryToWriteHeader() throws IOException {
-		File file = config.getExExportFile();
-		boolean exists = file.exists();
-
-		if (!exists) {
-			exportHeaderOrShit();
-			return true;
-		} else {
-			return false;
-		}
-
 	}
 
 	/**
@@ -256,11 +268,11 @@ public abstract class AbstractEI {
 	 * @param file
 	 * @return
 	 */
-	public static AbstractEI getBySuffix(Set<AbstractEI> exporters, File file) {
+	public static AbstractExporterImporter getBySuffix(Set<AbstractExporterImporter> exporters, File file) {
 
 		String suffix = FilenameUtils.getExtension(file.getPath());
 
-		for (AbstractEI exporter : exporters) {
+		for (AbstractExporterImporter exporter : exporters) {
 			if (exporter.getSuffix().equalsIgnoreCase(suffix)) {
 				return exporter;
 			}
