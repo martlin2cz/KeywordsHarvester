@@ -42,7 +42,7 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 	private XSSFSheet writesheet;
 	private int nextRowIndex;
 
-	private InputStream ins;
+	private InputStream insToRead;
 	private Iterator<Row> rows;
 
 	public XLSXAppendingExporterImporter(Config config) {
@@ -82,9 +82,13 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 	public boolean openFileToWrite() throws IOException {
 		try {
 			tryToLoadYetExistingDocument();
-			return writesheet.getPhysicalNumberOfRows() > 0;
+			long count = writesheet.getPhysicalNumberOfRows();
+			return count > 0;
 		} catch (Exception e) {
 			throw new IOException("Cannot open file to write", e);
+		} finally {
+			writeworkbook = null;
+			writesheet = null;
 		}
 
 	}
@@ -139,6 +143,7 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 	}
 
 	private void tryToLoadYetExistingDocument() throws IOException {
+		InputStream ins = null;
 		try {
 			ins = new FileInputStream(config.getExExportFile());
 			writeworkbook = new XSSFWorkbook(ins);
@@ -164,6 +169,8 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 			throw e;
 		} finally {
 			IOUtils.closeQuietly(ous);
+			writeworkbook = null;
+			writesheet = null;
 		}
 	}
 
@@ -172,8 +179,8 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 	@Override
 	public void openFileToRead() throws IOException {
 		try {
-			ins = new FileInputStream(config.getExExportFile());
-			XSSFWorkbook readworkbook = new XSSFWorkbook(ins);
+			insToRead = new FileInputStream(config.getExExportFile());
+			XSSFWorkbook readworkbook = new XSSFWorkbook(insToRead);
 			XSSFSheet readsheet = readworkbook.getSheetAt(0);
 			rows = readsheet.rowIterator();
 		} catch (Exception e) {
@@ -183,8 +190,8 @@ public class XLSXAppendingExporterImporter extends AbstractExporterImporter {
 
 	@Override
 	public void closeFileToRead() throws IOException {
-		IOUtils.closeQuietly(ins);
-		ins = null;
+		IOUtils.closeQuietly(insToRead);
+		insToRead = null;
 		rows = null;
 	}
 
